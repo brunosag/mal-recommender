@@ -1,6 +1,6 @@
 export async function POST(request) {
   const params = new URLSearchParams(new URL(request.url).search);
-  const clientId = process.env.MAL_CLIENT_ID;
+  const clientId = process.env.NEXT_PUBLIC_MAL_CLIENT_ID;
   const clientSecret = process.env.MAL_CLIENT_SECRET;
   const code = params.get('code');
   const codeVerifier = params.get('code_verifier');
