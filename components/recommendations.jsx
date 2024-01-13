@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Anime from '@/components/anime';
 import Image from 'next/image';
-import Loading from '../loading';
+import Loading from '../app/loading';
 import loadingMew from '@/public/loading-mew.gif';
 
 export default function Recommendations() {
@@ -140,11 +140,22 @@ export default function Recommendations() {
     </div>
   ) : (
     <div className="container h-full p-8 flex flex-col gap-7">
-      <h1 className="text-3xl/[1] font-bold text-center">Recommendations</h1>
-      <Button onClick={recommend} className="mx-auto gap-1" disabled={recommending}>
-        {recommending && <Loader2Icon className="w-4 h-4 animate-spin" />}{' '}
-        {recommending ? 'Recommending...' : 'Recommend'}
-      </Button>
+      {recommendations.length === 0 ? (
+        <div className="flex h-full justify-center items-center">
+          <Button onClick={recommend} className="gap-1" disabled={recommending}>
+            {recommending && <Loader2Icon className="w-4 h-4 animate-spin" />}{' '}
+            {recommending ? 'Recommending...' : 'Recommend'}
+          </Button>
+        </div>
+      ) : (
+        <div className="flex justify-between">
+          <h1 className="text-2xl/[1] font-semibold">Your Recommendations</h1>
+          <Button onClick={recommend} className="gap-1" disabled={recommending}>
+            {recommending && <Loader2Icon className="w-4 h-4 animate-spin" />}{' '}
+            {recommending ? 'Recommending...' : 'Recommend'}
+          </Button>
+        </div>
+      )}
       {!recommending && (
         <div className="flex flex-col gap-3">
           {recommendations

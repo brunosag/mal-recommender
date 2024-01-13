@@ -3,9 +3,16 @@
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { logout } from '@/lib/auth';
+import { useEffect, useState } from 'react';
 
 export default function Header() {
-  const isLoggedIn = localStorage.getItem('access_token');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('access_token')) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <header className="supports-backdrop-blur:bg-background/60 sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">

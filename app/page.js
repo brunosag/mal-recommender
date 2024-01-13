@@ -7,6 +7,7 @@ import { getUserData } from '@/lib/data';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Loading from './loading';
+import Recommendations from '../components/recommendations';
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -58,24 +59,7 @@ export default function Home() {
 
   return user ? (
     // authenticated
-    <div className="flex flex-col h-full items-center justify-center text-center gap-3">
-      <Avatar className="w-24 h-24">
-        <AvatarImage src={user?.image} alt={user?.name} />
-        <AvatarFallback className="text-4xl">{user?.name[0].toUpperCase()}</AvatarFallback>
-      </Avatar>
-      <div className="flex flex-col">
-        <span>Logged in as</span>
-        <span className="text-2xl/[1] font-semibold">{user?.name}</span>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Button className="mt-5" onClick={() => router.push('/recommendations')}>
-          Recommendations
-        </Button>
-        <Button variant="destructive" onClick={logout}>
-          Logout
-        </Button>
-      </div>
-    </div>
+    <Recommendations />
   ) : (
     // not authenticated
     <div className="flex flex-col h-screen items-center justify-center text-center gap-10">
@@ -83,7 +67,7 @@ export default function Home() {
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Welcome to MAL Recommender!</h1>
         <p className="text-xl text-muted-foreground">Get anime recommendations tailored to your likes.</p>
       </div>
-      <Button onClick={authorize}>Login</Button>
+      <Button onClick={authorize}>Lgin</Button>
     </div>
   );
 }
