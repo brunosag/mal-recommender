@@ -14,9 +14,19 @@ export default function Home() {
   const router = useRouter();
 
   async function getUser() {
-    if (!!localStorage.getItem('access_token')) {
-      const userData = await getUserData();
-      setUser(userData);
+    if (localStorage.getItem('access_token')) {
+      if (localStorage.getItem('user')) {
+        setUser(JSON.parse(localStorage.getItem('user')));
+      } else {
+        const userData = await getUserData();
+        const formattedUserData = {
+          id: userData.id,
+          name: userData.name,
+          image: userData.picture,
+        };
+        setUser(formattedUserData);
+        localStorage.setItem('user', JSON.stringify(formattedUserData));
+      }
     } else {
       setUser(null);
     }
@@ -50,16 +60,16 @@ export default function Home() {
     // authenticated
     <div className="flex flex-col h-screen items-center justify-center text-center gap-3">
       <Avatar className="w-24 h-24">
-        <AvatarImage src={user?.picture} alt={user?.name} />
-        <AvatarFallback>{user?.name}</AvatarFallback>
+        <AvatarImage src={user?.image} alt={user?.name} />
+        <AvatarFallback className="text-4xl">{user?.name[0].toUpperCase()}</AvatarFallback>
       </Avatar>
       <div className="flex flex-col">
         <span>Logged in as</span>
         <span className="text-2xl/[1] font-semibold">{user?.name}</span>
       </div>
       <div className="flex flex-col gap-2">
-        <Button className="mt-5" onClick={() => router.push('/animelist')}>
-          Animelist
+        <Button className="mt-5" onClick={() => router.push('/recommendations')}>
+          Recommendations
         </Button>
         <Button variant="destructive" onClick={logout}>
           Logout
