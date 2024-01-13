@@ -39,7 +39,7 @@ export default function Recommendations() {
   async function recommend() {
     setRecommending(true);
 
-    const fetchedAnimes = await getUserAnimeList();
+		const fetchedAnimes = await getUserAnimeList();
     if (typeof fetchedAnimes === 'undefined' || 'message' in fetchedAnimes) {
       setRecommending(false);
       toast({ description: 'Request limit exceeded.', variant: 'destructive' });
@@ -69,7 +69,7 @@ export default function Recommendations() {
 
     for (const anime of userList) {
       const fetchedRecommendations = await getAnimeDetails(anime.anime_id).then((data) => data.recommendations);
-      if (typeof recommendationDetails === 'undefined' || 'message' in fetchedRecommendations) {
+      if (typeof fetchedRecommendations === 'undefined' || 'message' in fetchedRecommendations) {
         setRecommending(false);
         toast({ description: 'Request limit exceeded.', variant: 'destructive' });
         return;
@@ -80,7 +80,7 @@ export default function Recommendations() {
           continue;
         }
         const recommendationDetails = await getAnimeDetails(recommendation.node.id);
-        if (typeof fetchrecommendationDetailsedAnimes === 'undefined' || 'message' in recommendationDetails) {
+        if (typeof recommendationDetails === 'undefined' || 'message' in recommendationDetails) {
           setRecommending(false);
           toast({ description: 'Request limit exceeded.', variant: 'destructive' });
           return;
@@ -92,7 +92,7 @@ export default function Recommendations() {
               id: recommendationDetails.id,
               title: recommendationDetails.title,
               mean: recommendationDetails.mean,
-              image: recommendationDetails.main_picture.large,
+              image: recommendationDetails.image,
               genres: recommendationDetails.genres,
             });
             setAnimeBase((prev) => [...prev, animes[animes.length - 1]]);
@@ -140,31 +140,19 @@ export default function Recommendations() {
     </div>
   ) : (
     <div className="container h-full p-8 flex flex-col gap-7">
-      {recommendations.length === 0 ? (
-        <div className="flex h-full justify-center items-center">
-          <Button onClick={recommend} className="gap-1" disabled={recommending}>
-            {recommending && <Loader2Icon className="w-4 h-4 animate-spin" />}{' '}
-            {recommending ? 'Recommending...' : 'Recommend'}
-          </Button>
-        </div>
-      ) : (
-        <div className="flex justify-between">
-          <h1 className="text-2xl/[1] font-semibold">Your Recommendations</h1>
-          <Button onClick={recommend} className="gap-1" disabled={recommending}>
-            {recommending && <Loader2Icon className="w-4 h-4 animate-spin" />}{' '}
-            {recommending ? 'Recommending...' : 'Recommend'}
-          </Button>
-        </div>
-      )}
-      {!recommending && (
-        <div className="flex flex-col gap-3">
-          {recommendations
-            .sort((a, b) => b.points - a.points)
-            .map((r, index) => (
-              <Anime key={index} anime={animeBase.find((anime) => anime.id === r.anime_id)} points={r.points} />
-            ))}
-        </div>
-      )}
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl/[1] font-semibold">Your Recommendations</h1>
+        <Button onClick={recommend} className="gap-1">
+          Recommend
+        </Button>
+      </div>
+      <div className="flex flex-col gap-3">
+        {recommendations
+          .sort((a, b) => b.points - a.points)
+          .map((r, index) => (
+            <Anime key={index} anime={animeBase.find((anime) => anime.id === r.anime_id)} points={r.points} />
+          ))}
+      </div>
     </div>
   );
 }

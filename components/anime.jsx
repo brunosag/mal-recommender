@@ -2,8 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Anime({ anime, points }) {
-  if (!anime) return null;
-
   const MALUrl = `https://myanimelist.net/anime/${anime.id}`;
 
   return (

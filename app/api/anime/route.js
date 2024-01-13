@@ -12,7 +12,16 @@ export async function GET(request) {
       },
     });
     const data = await res.json();
-    const anime = { ...data, title: data.alternatve_titles.en };
+    console.log(data);
+
+    const anime = {
+      id: data.id,
+      title: data.alternative_titles.en ?? data.title,
+      image: data.main_picture.large,
+      mean: data.mean,
+      genres: data.genres,
+      recommendations: data.recommendations,
+    };
 
     return Response.json(anime);
   } catch (error) {

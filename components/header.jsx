@@ -11,7 +11,7 @@ export default function Header() {
   useEffect(() => {
     if (localStorage.getItem('access_token')) {
       setIsLoggedIn(true);
-    }
+    } 
   }, []);
 
   return (
