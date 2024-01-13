@@ -12,11 +12,10 @@ export async function GET(request) {
       },
     });
     const data = await res.json();
-    console.log(data);
 
     const anime = {
       id: data.id,
-      title: data.alternative_titles.en ?? data.title,
+      title: data.alternative_titles.en || data.title,
       image: data.main_picture.large,
       mean: data.mean,
       genres: data.genres,

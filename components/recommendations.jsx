@@ -39,7 +39,7 @@ export default function Recommendations() {
   async function recommend() {
     setRecommending(true);
 
-		const fetchedAnimes = await getUserAnimeList();
+    const fetchedAnimes = await getUserAnimeList();
     if (typeof fetchedAnimes === 'undefined' || 'message' in fetchedAnimes) {
       setRecommending(false);
       toast({ description: 'Request limit exceeded.', variant: 'destructive' });
@@ -87,18 +87,14 @@ export default function Recommendations() {
         }
 
         if (!animes.find((anime) => anime.id === recommendationDetails.id)) {
-          try {
-            animes.push({
-              id: recommendationDetails.id,
-              title: recommendationDetails.title,
-              mean: recommendationDetails.mean,
-              image: recommendationDetails.image,
-              genres: recommendationDetails.genres,
-            });
-            setAnimeBase((prev) => [...prev, animes[animes.length - 1]]);
-          } catch (error) {
-            console.log(recommendationDetails);
-          }
+          animes.push({
+            id: recommendationDetails.id,
+            title: recommendationDetails.title,
+            mean: recommendationDetails.mean,
+            image: recommendationDetails.image,
+            genres: recommendationDetails.genres,
+          });
+          setAnimeBase((prev) => [...prev, animes[animes.length - 1]]);
         }
 
         const seen = seenIDs.has(recommendationDetails.id);
@@ -138,12 +134,20 @@ export default function Recommendations() {
         <span className="italic">matte kudasai</span>
       </div>
     </div>
+  ) : recommendations.length === 0 ? (
+    <div className="flex flex-col h-full items-center justify-center gap-8 text-center">
+      <div>
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
+        <p className="text-lg text-muted-foreground">It may take a while, though.</p>
+      </div>
+      <Button onClick={recommend}>Recommend</Button>
+    </div>
   ) : (
     <div className="container h-full p-8 flex flex-col gap-7">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl/[1] font-semibold">Your Recommendations</h1>
         <Button onClick={recommend} className="gap-1">
-          Recommend
+          Refresh
         </Button>
       </div>
       <div className="flex flex-col gap-3">
