@@ -58,7 +58,7 @@ export default function Home() {
 
   return user ? (
     // authenticated
-    <div className="flex flex-col h-screen items-center justify-center text-center gap-3">
+    <div className="flex flex-col h-full items-center justify-center text-center gap-3">
       <Avatar className="w-24 h-24">
         <AvatarImage src={user?.image} alt={user?.name} />
         <AvatarFallback className="text-4xl">{user?.name[0].toUpperCase()}</AvatarFallback>

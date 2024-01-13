@@ -40,7 +40,7 @@ export default function Recommendations() {
     setRecommending(true);
 
     const fetchedAnimes = await getUserAnimeList();
-    if (!fetchedAnimes || 'message' in fetchedAnimes) {
+    if (typeof fetchedAnimes === 'undefined' || 'message' in fetchedAnimes) {
       setRecommending(false);
       toast({ description: 'Request limit exceeded.', variant: 'destructive' });
       return;
@@ -69,7 +69,7 @@ export default function Recommendations() {
 
     for (const anime of userList) {
       const fetchedRecommendations = await getAnimeDetails(anime.anime_id).then((data) => data.recommendations);
-      if (!fetchedRecommendations || 'message' in fetchedRecommendations) {
+      if (typeof recommendationDetails === 'undefined' || 'message' in fetchedRecommendations) {
         setRecommending(false);
         toast({ description: 'Request limit exceeded.', variant: 'destructive' });
         return;
@@ -80,7 +80,7 @@ export default function Recommendations() {
           continue;
         }
         const recommendationDetails = await getAnimeDetails(recommendation.node.id);
-        if (!recommendationDetails || 'message' in recommendationDetails) {
+        if (typeof fetchrecommendationDetailsedAnimes === 'undefined' || 'message' in recommendationDetails) {
           setRecommending(false);
           toast({ description: 'Request limit exceeded.', variant: 'destructive' });
           return;
@@ -131,7 +131,7 @@ export default function Recommendations() {
   }
 
   return recommending ? (
-    <div className="h-screen flex flex-col items-center justify-center gap-3">
+    <div className="flex flex-col h-full items-center justify-center gap-3">
       <Image src={loadingMew} alt="Loading Mew" className="w-48" />
       <div className="flex flex-col text-center gap-1">
         <span className="text-lg/[1] font-semibold">Recommending...</span>
@@ -139,7 +139,7 @@ export default function Recommendations() {
       </div>
     </div>
   ) : (
-    <div className="container p-8 flex flex-col gap-7">
+    <div className="container h-full p-8 flex flex-col gap-7">
       <h1 className="text-3xl/[1] font-bold text-center">Recommendations</h1>
       <Button onClick={recommend} className="mx-auto gap-1" disabled={recommending}>
         {recommending && <Loader2Icon className="w-4 h-4 animate-spin" />}{' '}
