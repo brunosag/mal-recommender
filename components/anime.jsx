@@ -60,7 +60,7 @@ export default function Anime({ anime, points, relatedAnime }) {
                   >
                     {anime.title}
                   </Link>
-                  <span className="text-foreground/50 text-sm">{anime.score}</span>
+                  <span className="text-foreground/50 text-sm">{anime.score === 0 ? '-' : anime.score}</span>
                 </div>
               ))}
             </div>
