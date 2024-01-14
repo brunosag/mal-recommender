@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { logout } from '@/lib/auth';
 import { useEffect, useState } from 'react';
+import ModeToggle from './mode-toggle';
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -11,7 +12,7 @@ export default function Header() {
   useEffect(() => {
     if (localStorage.getItem('access_token')) {
       setIsLoggedIn(true);
-    } 
+    }
   }, []);
 
   return (
@@ -20,11 +21,14 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2">
           <h1 className="font-bold">MAL Recommender</h1>
         </Link>
-        {isLoggedIn && (
-          <Button onClick={logout} variant="ghost">
-            Logout
-          </Button>
-        )}
+        <div className='flex items-center gap-2'>
+          <ModeToggle />
+          {isLoggedIn && (
+            <Button onClick={logout} variant="ghost">
+              Logout
+            </Button>
+          )}
+        </div>
       </div>
     </header>
   );
