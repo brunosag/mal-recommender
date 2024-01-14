@@ -52,6 +52,7 @@ export default function Recommendations() {
       mean: anime.mean,
       image: anime.image,
       genres: anime.genres,
+      members: anime.members,
     }));
     setAnimeBase(animes);
 
@@ -91,8 +92,8 @@ export default function Recommendations() {
             id: recommendationDetails.id,
             title: recommendationDetails.title,
             mean: recommendationDetails.mean,
-						image: recommendationDetails.image,
-						year: recommendationDetails.year,
+            image: recommendationDetails.image,
+            year: recommendationDetails.year,
             genres: recommendationDetails.genres,
           });
           setAnimeBase((prev) => [...prev, animes[animes.length - 1]]);
@@ -100,9 +101,10 @@ export default function Recommendations() {
 
         const seen = seenIDs.has(recommendationDetails.id);
         const points = calculatePoints({
-          votes: recommendation.num_recommendations + 1,
+          votes: recommendation.num_recommendations,
           score: anime.score,
           mean: recommendationDetails.mean,
+          members: animes.find((item) => item.id === anime.anime_id).members,
         });
 
         setRecommendations((prev) => {
@@ -118,7 +120,6 @@ export default function Recommendations() {
             );
           } else {
             seenIDs.add(recommendationDetails.id);
-            console.log(anime);
             return [
               ...prev,
               {
@@ -165,12 +166,12 @@ export default function Recommendations() {
       </div>
       <div className="flex flex-col gap-3">
         {recommendations
-          .sort((a, b) => b.points - a.points)
+          .sort((a, b) => b.points * b.related_anime.length - a.points * a.related_anime.length)
           .map((r, index) => (
             <Anime
               key={index}
               anime={animeBase.find((anime) => anime.id === r.anime_id)}
-              points={r.points}
+              points={r.points * r.related_anime.length}
               relatedAnime={r.related_anime.map((item) => ({
                 ...animeBase.find((anime) => anime.id === item.anime_id),
                 score: item.score,
