@@ -108,12 +108,24 @@ export default function Recommendations() {
           if (seen) {
             return prev.map((item) =>
               item.anime_id === recommendationDetails.id
-                ? { anime_id: item.anime_id, points: item.points + points }
+                ? {
+                    anime_id: item.anime_id,
+                    related_anime: [...item.related_anime, { anime_id: anime.anime_id, score: anime.score }],
+                    points: item.points + points,
+                  }
                 : item
             );
           } else {
             seenIDs.add(recommendationDetails.id);
-            return [...prev, { anime_id: recommendationDetails.id, points }];
+            console.log(anime);
+            return [
+              ...prev,
+              {
+                anime_id: recommendationDetails.id,
+                related_anime: [{ anime_id: anime.anime_id, score: anime.score }],
+                points,
+              },
+            ];
           }
         });
       }
@@ -127,10 +139,10 @@ export default function Recommendations() {
   }
 
   return recommending ? (
-    <div className="flex flex-col h-full items-center justify-center gap-3">
+    <div className="flex flex-col h-full items-center justify-center gap-6">
       <Image src={loadingMew} alt="Loading Mew" className="w-48" />
       <div className="flex flex-col text-center gap-1">
-        <span className="text-lg/[1] font-semibold">Recommending...</span>
+        <span className="text-xl/[1] font-semibold">Recommending...</span>
         <span className="italic">matte kudasai</span>
       </div>
     </div>
@@ -138,12 +150,12 @@ export default function Recommendations() {
     <div className="flex flex-col h-full items-center justify-center gap-8 text-center">
       <div>
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
-        <p className="text-lg text-muted-foreground">It may take a while, though.</p>
+        <p className="text-lg text-muted-foreground">It may take a while, though!</p>
       </div>
       <Button onClick={recommend}>Recommend</Button>
     </div>
   ) : (
-    <div className="container h-full p-8 flex flex-col gap-7">
+    <div className="container h-full p-8 flex flex-col gap-5">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl/[1] font-semibold">Your Recommendations</h1>
         <Button onClick={recommend} className="gap-1">
@@ -154,7 +166,15 @@ export default function Recommendations() {
         {recommendations
           .sort((a, b) => b.points - a.points)
           .map((r, index) => (
-            <Anime key={index} anime={animeBase.find((anime) => anime.id === r.anime_id)} points={r.points} />
+            <Anime
+              key={index}
+              anime={animeBase.find((anime) => anime.id === r.anime_id)}
+              points={r.points}
+              relatedAnime={r.related_anime.map((item) => ({
+                ...animeBase.find((anime) => anime.id === item.anime_id),
+                score: item.score,
+              }))}
+            />
           ))}
       </div>
     </div>
