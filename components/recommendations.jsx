@@ -91,7 +91,8 @@ export default function Recommendations() {
             id: recommendationDetails.id,
             title: recommendationDetails.title,
             mean: recommendationDetails.mean,
-            image: recommendationDetails.image,
+						image: recommendationDetails.image,
+						year: recommendationDetails.year,
             genres: recommendationDetails.genres,
           });
           setAnimeBase((prev) => [...prev, animes[animes.length - 1]]);

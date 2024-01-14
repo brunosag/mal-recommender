@@ -13,25 +13,33 @@ export default function Anime({ anime, points, relatedAnime }) {
         <Link href={MALUrl} target="_blank">
           <Image
             src={anime.image}
-            alt={anime.title}
+            alt={anime.title.jp}
             width="0"
             height="0"
             sizes="100vw"
-            className="w-24 h-auto rounded-md"
+            className="w-28 h-auto rounded-md"
           />
         </Link>
-        <div className="flex flex-col justify-center gap-1">
-          <span className="text-xl font-semibold">
+        <div className="flex flex-col justify-center gap-5">
+          <span className="font-semibold">
             <Link href={MALUrl} target="_blank" className="inline-block">
-              {anime.title}
+              <div className="flex flex-col gap-1">
+                <span className="text-xl/[1]">{anime.title.jp}</span>
+                {anime.title.jp !== anime.title.en && (
+                  <span className="text-foreground/50 text-sm">{anime.title.en}</span>
+                )}
+              </div>
             </Link>
           </span>
-          <span className="text-foreground/50 text-xs">
-            {anime.genres
-              .map((genre, index) => (index === anime.genres.length - 1 ? genre.name : `${genre.name}, `))
-              .join('')}
-          </span>
-          <span className="text-xs font-semibold">{anime.mean.toFixed(2)}</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-foreground/80">{anime.year}</span>
+            <span className="text-foreground/50 text-xs">
+              {anime.genres
+                .map((genre, index) => (index === anime.genres.length - 1 ? genre.name : `${genre.name}, `))
+                .join('')}
+            </span>
+            <span className="text-xs font-semibold">{anime.mean.toFixed(2)}</span>
+          </div>
         </div>
       </div>
       <div className="flex gap-5 items-center">
