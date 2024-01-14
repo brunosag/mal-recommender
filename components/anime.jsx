@@ -31,7 +31,7 @@ export default function Anime({ anime, points, relatedAnime }) {
               .map((genre, index) => (index === anime.genres.length - 1 ? genre.name : `${genre.name}, `))
               .join('')}
           </span>
-          <span className="text-xs font-semibold">{anime.mean}</span>
+          <span className="text-xs font-semibold">{anime.mean.toFixed(2)}</span>
         </div>
       </div>
       <div className="flex gap-5 items-center">
