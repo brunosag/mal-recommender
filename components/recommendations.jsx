@@ -69,12 +69,16 @@ export default function Recommendations() {
     const seenIDs = new Set();
 
     for (const anime of userList) {
-      const fetchedRecommendations = await getAnimeDetails(anime.anime_id).then((data) => data.recommendations);
-      if (typeof fetchedRecommendations === 'undefined' || 'message' in fetchedRecommendations) {
+      const fetchedAnime = await getAnimeDetails(anime.anime_id);
+      if (typeof fetchedAnime === 'undefined' || 'message' in fetchedAnime) {
         setRecommending(false);
         toast({ description: 'Request limit exceeded.', variant: 'destructive' });
         return;
       }
+      if (fetchedAnime.hasPrequel) {
+        continue;
+      }
+      const fetchedRecommendations = fetchedAnime.recommendations;
 
       for (const recommendation of fetchedRecommendations) {
         if (userList.some((userAnime) => userAnime.anime_id === recommendation.node.id)) {
