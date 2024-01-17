@@ -57,7 +57,6 @@ export default function Recommendations() {
     setAnimeBase(animes);
 
     const userList = fetchedAnimes
-      .filter((anime) => anime.score >= 7)
       .map((anime) => ({
         anime_id: anime.id,
         score: anime.score,
@@ -69,6 +68,9 @@ export default function Recommendations() {
     const seenIDs = new Set();
 
     for (const anime of userList) {
+      if (anime.score < 7) {
+        continue;
+      }
       const fetchedAnime = await getAnimeDetails(anime.anime_id);
       if (typeof fetchedAnime === 'undefined' || 'message' in fetchedAnime) {
         setRecommending(false);
