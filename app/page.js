@@ -1,18 +1,15 @@
 'use client';
 
-import { authorize, login, logout } from '@/lib/auth';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { authorize, login } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { getUserData } from '@/lib/data';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Loading from './loading';
 import Recommendations from '../components/recommendations';
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   async function getUser() {
     if (localStorage.getItem('access_token')) {
