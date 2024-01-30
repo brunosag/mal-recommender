@@ -2,7 +2,7 @@
 
 import { authorize, login } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
-import { getUserData } from '@/lib/data';
+import { fetchUserData } from '@/lib/fetch';
 import { useEffect, useState } from 'react';
 import Loading from './loading';
 import Recommendations from '../components/recommendations';
@@ -16,7 +16,7 @@ export default function Home() {
       if (localStorage.getItem('user')) {
         setUser(JSON.parse(localStorage.getItem('user')));
       } else {
-        const userData = await getUserData();
+        const userData = await fetchUserData();
         const formattedUserData = {
           id: userData.id,
           name: userData.name,

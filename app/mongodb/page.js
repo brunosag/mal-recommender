@@ -1,3 +1,4 @@
+import MongoTest from '@/components/mongo-test';
 import clientPromise from '@/lib/mongodb';
 
 export default async function MongoDB() {
@@ -14,6 +15,7 @@ export default async function MongoDB() {
     <div className="h-full flex flex-col items-center justify-center">
       <span className="text-xs">MONGODB STATUS</span>
       <span className="text-4xl font-bold">{isConnected ? 'Connected' : 'Not Connected'}</span>
+      <MongoTest />
     </div>
   );
 }
