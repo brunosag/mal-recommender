@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { calculatePoints } from '@/lib/utils';
-import { getAnimeDetails, getUserAnimeList } from '@/lib/data';
+import { fetchAnimeDetails, fetchUserAnimeList } from '@/lib/fetch';
 import { Loader2Icon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
@@ -39,7 +39,7 @@ export default function Recommendations() {
   async function recommend() {
     setRecommending(true);
 
-    const fetchedAnimes = await getUserAnimeList();
+    const fetchedAnimes = await fetchUserAnimeList();
     if (typeof fetchedAnimes === 'undefined' || 'message' in fetchedAnimes) {
       setRecommending(false);
       toast({ description: 'Request limit exceeded.', variant: 'destructive' });
@@ -71,7 +71,7 @@ export default function Recommendations() {
       if (anime.score < 7) {
         continue;
       }
-      const fetchedAnime = await getAnimeDetails(anime.anime_id);
+      const fetchedAnime = await fetchAnimeDetails(anime.anime_id);
       if (typeof fetchedAnime === 'undefined' || 'message' in fetchedAnime) {
         setRecommending(false);
         toast({ description: 'Request limit exceeded.', variant: 'destructive' });
@@ -86,7 +86,7 @@ export default function Recommendations() {
         if (userList.some((userAnime) => userAnime.anime_id === recommendation.node.id)) {
           continue;
         }
-        const recommendationDetails = await getAnimeDetails(recommendation.node.id);
+        const recommendationDetails = await fetchAnimeDetails(recommendation.node.id);
         if (typeof recommendationDetails === 'undefined' || 'message' in recommendationDetails) {
           setRecommending(false);
           toast({ description: 'Request limit exceeded.', variant: 'destructive' });
