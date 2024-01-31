@@ -1,6 +1,6 @@
 'use client';
 
-import { insertUser } from '@/lib/db';
+import { insertUser } from '@/lib/db/db';
 import { Button } from './ui/button';
 
 export default function MongoTest() {

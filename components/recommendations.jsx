@@ -7,11 +7,14 @@ import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Anime from '@/components/anime';
 import Image from 'next/image';
-import Loading from '../app/loading';
+import Loading from '@/app/loading';
 import loadingMew from '@/public/loading-mew.gif';
+import { getAnime, insertAnime, updateAnime } from '@/lib/db/animes';
+import { saveAnimeFromUserList } from '@/lib/data';
 
 export default function Recommendations() {
   const [animeBase, setAnimeBase] = useState([]);
+
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [recommending, setRecommending] = useState(false);
@@ -45,98 +48,91 @@ export default function Recommendations() {
       return;
     }
 
-    const animes = fetchedAnimes.map((anime) => ({
-      id: anime.id,
-      title: anime.title,
-      mean: anime.mean,
-      image: anime.image,
-      genres: anime.genres,
-      members: anime.members,
-    }));
-    setAnimeBase(animes);
+    saveAnimeFromUserList(fetchedAnimes);
 
-    const userList = fetchedAnimes
-      .map((anime) => ({
-        anime_id: anime.id,
-        score: anime.score,
-      }))
-      .sort((a, b) => b.score - a.score);
+    // const userList = fetchedAnimes
+    //   .map((anime) => ({
+    //     anime_id: anime.id,
+    //     score: anime.score,
+    //   }))
+    //   .sort((a, b) => b.score - a.score);
 
-    setRecommendations([]);
+    // setRecommendations([]);
 
-    const seenIDs = new Set();
+    // const seenIDs = new Set();
 
-    for (const anime of userList) {
-      if (anime.score < 7) {
-        continue;
-      }
-      const fetchedAnime = await fetchAnimeDetails(anime.anime_id);
-      if (typeof fetchedAnime === 'undefined' || 'message' in fetchedAnime) {
-        setRecommending(false);
-        toast({ description: 'Request limit exceeded.', variant: 'destructive' });
-        return;
-      }
-      if (fetchedAnime.hasPrequel) {
-        continue;
-      }
-      const fetchedRecommendations = fetchedAnime.recommendations;
+    // for (const anime of userList) {
+    //   if (anime.score < 7) {
+    //     continue;
+    //   }
+    //   const fetchedAnime = await fetchAnimeDetails(anime.anime_id);
+    //   if (typeof fetchedAnime === 'undefined' || 'message' in fetchedAnime) {
+    //     setRecommending(false);
+    //     toast({ description: 'Request limit exceeded.', variant: 'destructive' });
+    //     return;
+    //   }
+    //   if (fetchedAnime.hasPrequel) {
+    //     continue;
+    //   }
+    //   const fetchedRecommendations = fetchedAnime.recommendations;
 
-      for (const recommendation of fetchedRecommendations) {
-        if (userList.some((userAnime) => userAnime.anime_id === recommendation.node.id)) {
-          continue;
-        }
-        const recommendationDetails = await fetchAnimeDetails(recommendation.node.id);
-        if (typeof recommendationDetails === 'undefined' || 'message' in recommendationDetails) {
-          setRecommending(false);
-          toast({ description: 'Request limit exceeded.', variant: 'destructive' });
-          return;
-        }
+    //   for (const recommendation of fetchedRecommendations) {
+    //     if (userList.some((userAnime) => userAnime.anime_id === recommendation.node.id)) {
+    //       continue;
+    //     }
+    //     const recommendationDetails = await fetchAnimeDetails(recommendation.node.id);
+    //     if (typeof recommendationDetails === 'undefined' || 'message' in recommendationDetails) {
+    //       setRecommending(false);
+    //       toast({ description: 'Request limit exceeded.', variant: 'destructive' });
+    //       return;
+    //     }
 
-        if (!animes.find((anime) => anime.id === recommendationDetails.id)) {
-          animes.push({
-            id: recommendationDetails.id,
-            title: recommendationDetails.title,
-            mean: recommendationDetails.mean,
-            image: recommendationDetails.image,
-            year: recommendationDetails.year,
-            genres: recommendationDetails.genres,
-          });
-          setAnimeBase((prev) => [...prev, animes[animes.length - 1]]);
-        }
+    //     if (!animes.find((anime) => anime.id === recommendationDetails.id)) {
+    //       animes.push({
+    //         _id: recommendationDetails.id,
+    //         title: recommendationDetails.title,
+    //         mean: recommendationDetails.mean,
+    //         image: recommendationDetails.image,
+    //         year: recommendationDetails.year,
+    //         genres: recommendationDetails.genres,
+    //         members: recommendationDetails.members,
+    //       });
+    //       setAnimeBase((prev) => [...prev, animes[animes.length - 1]]);
+    //     }
 
-        const seen = seenIDs.has(recommendationDetails.id);
-        const points = calculatePoints({
-          votes: recommendation.num_recommendations,
-          score: anime.score,
-          mean: recommendationDetails.mean,
-          members: animes.find((item) => item.id === anime.anime_id).members,
-        });
+    //     const seen = seenIDs.has(recommendationDetails.id);
+    //     const points = calculatePoints({
+    //       votes: recommendation.num_recommendations,
+    //       score: anime.score,
+    //       mean: recommendationDetails.mean,
+    //       members: animes.find((item) => item.id === anime.anime_id).members,
+    //     });
 
-        setRecommendations((prev) => {
-          if (seen) {
-            return prev.map((item) =>
-              item.anime_id === recommendationDetails.id
-                ? {
-                    anime_id: item.anime_id,
-                    related_anime: [...item.related_anime, { anime_id: anime.anime_id, score: anime.score }],
-                    points: item.points + points,
-                  }
-                : item
-            );
-          } else {
-            seenIDs.add(recommendationDetails.id);
-            return [
-              ...prev,
-              {
-                anime_id: recommendationDetails.id,
-                related_anime: [{ anime_id: anime.anime_id, score: anime.score }],
-                points,
-              },
-            ];
-          }
-        });
-      }
-    }
+    //     setRecommendations((prev) => {
+    //       if (seen) {
+    //         return prev.map((item) =>
+    //           item.anime_id === recommendationDetails.id
+    //             ? {
+    //                 anime_id: item.anime_id,
+    //                 related_anime: [...item.related_anime, { anime_id: anime.anime_id, score: anime.score }],
+    //                 points: item.points + points,
+    //               }
+    //             : item
+    //         );
+    //       } else {
+    //         seenIDs.add(recommendationDetails.id);
+    //         return [
+    //           ...prev,
+    //           {
+    //             anime_id: recommendationDetails.id,
+    //             related_anime: [{ anime_id: anime.anime_id, score: anime.score }],
+    //             points,
+    //           },
+    //         ];
+    //       }
+    //     });
+    //   }
+    // }
 
     setRecommending(false);
   }

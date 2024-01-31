@@ -2,7 +2,7 @@ export async function GET(request) {
   const params = new URLSearchParams(new URL(request.url).search);
   const token = params.get('token');
 
-  const url = `https://api.myanimelist.net/v2/users/@me/animelist?status=completed&limit=1000&fields=list_status,genres,mean,alternative_titles,num_list_users`;
+  const url = `https://api.myanimelist.net/v2/users/@me/animelist?status=completed&limit=1000&fields=list_status,genres,mean,alternative_titles,num_list_users,start_season`;
 
   try {
     const res = await fetch(url, {
@@ -15,11 +15,12 @@ export async function GET(request) {
     const animelist = data.data.map((anime) => {
       return {
         id: anime.node.id,
-        title: anime.node.title,
+        title: { jp: anime.node.title, en: anime.node.alternative_titles.en },
         image: anime.node.main_picture.large,
+        year: anime.node.start_season.year,
         score: anime.list_status.score,
-				mean: anime.node.mean,
-				members: anime.node.num_list_users,
+        mean: anime.node.mean,
+        members: anime.node.num_list_users,
         genres: anime.node.genres,
       };
     });
