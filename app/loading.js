@@ -1,4 +1,3 @@
-import { Loader2Icon } from 'lucide-react';
 import Image from 'next/image';
 import loadingMew from '@/public/loading-mew.gif';
 

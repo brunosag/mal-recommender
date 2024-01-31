@@ -5,7 +5,11 @@ import { Button } from './ui/button';
 
 export default function MongoTest() {
   return (
-    <Button className="mt-6" size="sm" onClick={() => insertUser({ name: 'Bruno', email: 'brunosag02@gmail.cm' })}>
+    <Button
+      className="mt-6"
+      size="sm"
+      onClick={() => insertUser({ _id: '1', name: 'Bruno', email: 'brunosag02@gmail.cm' })}
+    >
       Insert User
     </Button>
   );

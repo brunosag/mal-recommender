@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { calculatePoints } from '@/lib/utils';
 import { fetchAnimeDetails, fetchUserAnimeList } from '@/lib/fetch';
-import { Loader2Icon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Anime from '@/components/anime';

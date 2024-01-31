@@ -1,8 +1,8 @@
 'use client';
 
-import { authorize, login } from '@/lib/auth';
+import { authenticate } from '@/lib/data';
+import { authorize } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
-import { fetchUserData } from '@/lib/fetch';
 import { useEffect, useState } from 'react';
 import Loading from './loading';
 import Recommendations from '../components/recommendations';
@@ -11,43 +11,8 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  async function getUser() {
-    if (localStorage.getItem('access_token')) {
-      if (localStorage.getItem('user')) {
-        setUser(JSON.parse(localStorage.getItem('user')));
-      } else {
-        const userData = await fetchUserData();
-        const formattedUserData = {
-          id: userData.id,
-          name: userData.name,
-          image: userData.picture,
-        };
-        setUser(formattedUserData);
-        localStorage.setItem('user', JSON.stringify(formattedUserData));
-      }
-    } else {
-      setUser(null);
-    }
-  }
-
-  async function authenticate() {
-    const url = new URL(window.location);
-    const code = url.searchParams.get('code');
-    if (code) {
-      if (!localStorage.getItem('access_token')) {
-        localStorage.setItem('auth_code', code);
-        await login();
-      }
-      url.searchParams.delete('code');
-      window.history.replaceState({}, '', url);
-    }
-    await getUser();
-
-    setLoading(false);
-  }
-
   useEffect(() => {
-    authenticate();
+    authenticate(setUser, setLoading);
   }, []);
 
   if (loading) {
