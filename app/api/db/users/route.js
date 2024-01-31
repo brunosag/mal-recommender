@@ -1,9 +1,11 @@
-export async function POST(request) {
-  const client = await clientPromise;
-  const db = client.db();
-  const user = await request.json();
+import clientPromise from '@/lib/mongodb';
 
-  const result = await db.users.insertOne(user);
+export async function POST(request) {
+  const newUser = await request.json();
+  const client = await clientPromise;
+  const db = client.db('db');
+
+  const result = await db.collection('users').insertOne(newUser);
 
   return Response.json(result);
 }
