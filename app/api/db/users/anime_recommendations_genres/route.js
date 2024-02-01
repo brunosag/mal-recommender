@@ -1,46 +1,31 @@
-/*import clientPromise from "@/lib/db/mongodb";
-
-export async function POST(request) {
-  const client = await clientPromise;
-  const db = client.db("db");
-    const params = new URLSearchParams(new URL(request.url).search);
-  const id = params.get("id");
-
-  const newGenre = await request.json();
-
-  const result = await db.collection("users").insertOne(newGenre);
-
-  return Response.json(result);
-}
+import clientPromise from '@/lib/db/mongodb';
 
 export async function GET(request) {
   const params = new URLSearchParams(new URL(request.url).search);
-  const id = params.get("id");
+  const user_id = params.get('user_id');
 
   const client = await clientPromise;
-  const db = client.db("db");
+  const db = client.db('db');
 
-  const result = await db
-    .collection("anime_genres")
-    .findOne({ _id: parseInt(id, 10) });
+  const result = await db.collection('users').findOne({ _id: parseInt(user_id, 10) });
 
-  return Response.json(result);
+  const genreList = result.anime_recommendations_genres;
+  return Response.json(genreList);
 }
 
 export async function PATCH(request) {
-  const client = await clientPromise;
-  const db = client.db("db");
   const params = new URLSearchParams(new URL(request.url).search);
-  const id = params.get("id");
+  const user_id = params.get('user_id');
 
-  const anime_id = await request.json();
+  const client = await clientPromise;
+  const db = client.db('db');
 
-  const filter = { _id: parseInt(id, 10) };
-  const update = { $push: { anime_ids: anime_id } };
+  const genreList = await request.json();
 
-  const result = await db
-    .collection("anime_genres")
-    .findOneAndUpdate(filter, update);
+  const filter = { _id: parseInt(user_id, 10) };
+  const update = { $set: { anime_recommendations_genres: genreList } };
+
+  const result = await db.collection('users').findOneAndUpdate(filter, update);
 
   return Response.json(result);
-}*/
+}
