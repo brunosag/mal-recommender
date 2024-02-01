@@ -1,18 +1,16 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { fetchUserAnimeList } from "@/lib/fetch";
-import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import Anime from "@/components/anime";
-import Image from "next/image";
-import Loading from "@/app/loading";
-import loadingMew from "@/public/loading-mew.gif";
-import { saveAnimeFromUserList, saveUserAnimeList } from "@/lib/data";
+import { Button } from '@/components/ui/button';
+import { fetchUserAnimeList } from '@/lib/fetch';
+import { saveAnimeFromUserList, saveUserAnimeList } from '@/lib/data';
+import { useEffect, useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import Anime from '@/components/anime';
+import Image from 'next/image';
+import Loading from '@/app/loading';
+import loadingMew from '@/public/loading-mew.gif';
 
-export default function Recommendations({ children, ...props }) {
-  const { currentUser } = props;
-
+export default function Recommendations({ currentUser }) {
   const [animeBase, setAnimeBase] = useState([]);
 
   const [recommendations, setRecommendations] = useState([]);
@@ -21,22 +19,20 @@ export default function Recommendations({ children, ...props }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    setAnimeBase(JSON.parse(localStorage.getItem("anime_base")) || []);
-    setRecommendations(
-      JSON.parse(localStorage.getItem("recommendations")) || []
-    );
+    setAnimeBase(JSON.parse(localStorage.getItem('anime_base')) || []);
+    setRecommendations(JSON.parse(localStorage.getItem('recommendations')) || []);
     setLoading(false);
   }, []);
 
   useEffect(() => {
     if (animeBase.length > 0) {
-      localStorage.setItem("anime_base", JSON.stringify(animeBase));
+      localStorage.setItem('anime_base', JSON.stringify(animeBase));
     }
   }, [animeBase]);
 
   useEffect(() => {
     if (recommendations.length > 0) {
-      localStorage.setItem("recommendations", JSON.stringify(recommendations));
+      localStorage.setItem('recommendations', JSON.stringify(recommendations));
     }
   }, [recommendations]);
 
@@ -44,9 +40,9 @@ export default function Recommendations({ children, ...props }) {
     setRecommending(true);
 
     const fetchedAnimes = await fetchUserAnimeList();
-    if (typeof fetchedAnimes === "undefined" || "message" in fetchedAnimes) {
+    if (typeof fetchedAnimes === 'undefined' || 'message' in fetchedAnimes) {
       setRecommending(false);
-      toast({ description: "Request limit exceeded.", variant: "destructive" });
+      toast({ description: 'Request limit exceeded.', variant: 'destructive' });
       return;
     }
 
@@ -148,12 +144,8 @@ export default function Recommendations({ children, ...props }) {
   ) : recommendations.length === 0 ? (
     <div className="flex flex-col h-full items-center justify-center gap-8 text-center">
       <div>
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          Get your recommendations!
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          It may take a while, though!
-        </p>
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
+        <p className="text-lg text-muted-foreground">It may take a while, though!</p>
       </div>
       <Button onClick={recommend}>Recommend</Button>
     </div>
@@ -167,11 +159,7 @@ export default function Recommendations({ children, ...props }) {
       </div>
       <div className="flex flex-col gap-3">
         {recommendations
-          .sort(
-            (a, b) =>
-              b.points * b.related_anime.length -
-              a.points * a.related_anime.length
-          )
+          .sort((a, b) => b.points * b.related_anime.length - a.points * a.related_anime.length)
           .map((r, index) => (
             <Anime
               key={index}
