@@ -4,9 +4,9 @@ export async function POST(request) {
   const client = await clientPromise;
   const db = client.db("db");
 
-  const newAnime = await request.json();
+  const newUser = await request.json();
 
-  const result = await db.collection("animes").insertOne(newAnime);
+  const result = await db.collection("users").insertOne(newUser);
 
   return Response.json(result);
 }
@@ -19,7 +19,7 @@ export async function GET(request) {
   const db = client.db("db");
 
   const result = await db
-    .collection("animes")
+    .collection("users")
     .findOne({ _id: parseInt(id, 10) });
 
   return Response.json(result);
@@ -29,12 +29,12 @@ export async function PATCH(request) {
   const client = await clientPromise;
   const db = client.db("db");
 
-  const anime = await request.json();
+  const userInfo = await request.json();
 
-  const filter = { _id: anime._id };
-  const update = { $set: anime };
+  const filter = { _id: userInfo._id };
+  const update = { $set: userInfo };
 
-  const result = await db.collection("animes").findOneAndUpdate(filter, update);
+  const result = await db.collection("users").findOneAndUpdate(filter, update);
 
   return Response.json(result);
 }
