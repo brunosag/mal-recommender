@@ -21,7 +21,7 @@ import Image from 'next/image';
 import Loading from '@/app/loading';
 import loadingMew from '@/public/loading-mew.gif';
 import { getUserAnimeRecommendations } from '@/lib/db/users';
-import { getAnime, getAnimes } from '@/lib/db/animes';
+import { getAnimes } from '@/lib/db/animes';
 
 export default function Recommendations({ currentUser }) {
   const [loading, setLoading] = useState(true);
@@ -67,7 +67,7 @@ export default function Recommendations({ currentUser }) {
     startRecommendationParameters();
   }, []);
 
-  async function recommend() {
+  async function refreshAnimeRecommendations() {
     setRecommending(true);
 
     const fetchedAnimes = await fetchUserAnimeList();
@@ -148,9 +148,9 @@ export default function Recommendations({ currentUser }) {
     }
 
     const formattedAnimeRecommendations = formatUserAnimeRecommendations(animeRecommendations);
-    saveUserAnimeRecommendations(currentUser, formattedAnimeRecommendations);
     if (formattedAnimeRecommendations.length !== 0) {
-      setUserAnimeRecommendations(formattedAnimeRecommendations.sort((a, b) => b.points - a.points));
+      await saveUserAnimeRecommendations(currentUser, formattedAnimeRecommendations);
+      setUserAnimeRecommendations(formattedAnimeRecommendations);
     }
     setRecommending(false);
   }
@@ -173,13 +173,13 @@ export default function Recommendations({ currentUser }) {
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
         <p className="text-lg text-muted-foreground">It may take a while, though!</p>
       </div>
-      <Button onClick={recommend}>Recommend</Button>
+      <Button onClick={refreshAnimeRecommendations}>Recommend</Button>
     </div>
   ) : (
     <div className="container h-full p-8 flex flex-col gap-5">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl/[1] font-semibold">Your Recommendations</h1>
-        <Button onClick={recommend} className="gap-1">
+        <Button onClick={refreshAnimeRecommendations} className="gap-1">
           Refresh
         </Button>
       </div>
