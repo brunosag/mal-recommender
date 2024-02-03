@@ -6,7 +6,7 @@ export async function GET(request) {
 
   let animeList = [];
   for (const entry of status) {
-    const url = `https://api.myanimelist.net/v2/users/@me/animelist?status=${entry}&limit=1000&fields=list_status,genres,mean,alternative_titles,num_list_users,start_season`;
+    const url = `https://api.myanimelist.net/v2/users/@me/animelist?status=${entry}&limit=1000&fields=list_status,media_type,genres,mean,alternative_titles,num_list_users,start_season`;
 
     try {
       const res = await fetch(url, {
@@ -21,12 +21,13 @@ export async function GET(request) {
           id: anime.node.id,
           title: { jp: anime.node.title, en: anime.node.alternative_titles.en },
           image: anime.node.main_picture.large,
-          status: anime.list_status.status,
-          year: anime.node.start_season.year,
-          score: anime.list_status.score,
+          media_type: anime.node.media_type,
           mean: anime.node.mean,
-          members: anime.node.num_list_users,
+          year: anime.node.start_season.year,
           genres: anime.node.genres,
+          members: anime.node.num_list_users,
+          status: anime.list_status.status,
+          score: anime.list_status.score,
         };
       });
 
