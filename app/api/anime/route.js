@@ -20,10 +20,14 @@ export async function GET(request) {
       mean: data.mean,
       genres: data.genres,
       year: data.start_season.year,
-      recommendations: data.recommendations,
-      hasPrequel: data.related_anime.some((item) =>
-        ['prequel', 'parent_story', 'full_story'].includes(item.relation_type)
-      ),
+      recommendations: data.recommendations.map((recommendation) => ({
+        anime_id: recommendation.node.id,
+        num_recommendations: recommendation.num_recommendations,
+      })),
+      related_anime: data.related_anime.map((relatedAnime) => ({
+        anime_id: relatedAnime.node.id,
+        relation_type: relatedAnime.relation_type,
+      })),
     };
 
     return Response.json(anime);

@@ -1,131 +1,129 @@
+// - VERIFICAR RENDERIZAÇÃO DE COMPONENTES DO SITE (return)
+// - QUANDO COMPLETOS OS ÍTENS ACIMA, COLOCAR CÓDIGO DE SALVAR GÊNEROS NA FUNÇÃO DE SALVAR LISTA DE RECOMENDAÇÃO
+// - QUANDO COMPLETOS OS ÍTENS ACIMA, REFATORAR CÓDIGO DOS COMPONENTES DESTE ARQUIVO
+
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { fetchUserAnimeList } from '@/lib/fetch';
-import { saveAnimeFromUserList, saveUserAnimeList } from '@/lib/data';
+import { fetchUserAnimeList, fetchAnimeDetails } from '@/lib/fetch';
+import { calculatePoints, formatUserAnimeRecommendations, hasPrequel, rateLimitExceeded } from '@/lib/utils';
+import {
+  saveAnimeDetails,
+  saveAnimeFromUserList,
+  saveAnimeRecommendationDetails,
+  saveUserAnimeList,
+  saveUserAnimeRecommendations,
+} from '@/lib/data';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Anime from '@/components/anime';
 import Image from 'next/image';
 import Loading from '@/app/loading';
 import loadingMew from '@/public/loading-mew.gif';
+import { getUserAnimeRecommendations } from '@/lib/db/users';
 
 export default function Recommendations({ currentUser }) {
-  const [animeBase, setAnimeBase] = useState([]);
-
-  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [recommending, setRecommending] = useState(false);
+  const [userAnimeRecommendations, setUserAnimeRecommendations] = useState([]);
   const { toast } = useToast();
 
+  function rateLimitToast() {
+    toast({ description: 'Request limit exceeded.', variant: 'destructive' });
+  }
+
   useEffect(() => {
-    setAnimeBase(JSON.parse(localStorage.getItem('anime_base')) || []);
-    setRecommendations(JSON.parse(localStorage.getItem('recommendations')) || []);
-    setLoading(false);
+    async function startRecommendationParameters() {
+      const newUserAnimeRecommendations = await getUserAnimeRecommendations(currentUser._id);
+      setUserAnimeRecommendations(newUserAnimeRecommendations);
+      setLoading(false);
+    }
+    startRecommendationParameters();
   }, []);
-
-  useEffect(() => {
-    if (animeBase.length > 0) {
-      localStorage.setItem('anime_base', JSON.stringify(animeBase));
-    }
-  }, [animeBase]);
-
-  useEffect(() => {
-    if (recommendations.length > 0) {
-      localStorage.setItem('recommendations', JSON.stringify(recommendations));
-    }
-  }, [recommendations]);
 
   async function recommend() {
     setRecommending(true);
 
     const fetchedAnimes = await fetchUserAnimeList();
-    if (typeof fetchedAnimes === 'undefined' || 'message' in fetchedAnimes) {
+    if (rateLimitExceeded(fetchedAnimes)) {
       setRecommending(false);
-      toast({ description: 'Request limit exceeded.', variant: 'destructive' });
+      rateLimitToast();
       return;
     }
 
-    saveAnimeFromUserList(fetchedAnimes);
-    saveUserAnimeList(currentUser, fetchedAnimes);
+    const userListAnimes = await saveAnimeFromUserList(fetchedAnimes);
+    const userList = saveUserAnimeList(currentUser, fetchedAnimes);
 
-    //setRecommendations([]);
+    let animeRecommendations = [];
 
-    //const seenIDs = new Set();
+    for (const anime of userList) {
+      if (anime.score < 7) {
+        continue;
+      }
 
-    // for (const anime of userList) {
-    //   if (anime.score < 7) {
-    //     continue;
-    //   }
-    //   const fetchedAnime = await fetchAnimeDetails(anime.anime_id);
-    //   if (typeof fetchedAnime === 'undefined' || 'message' in fetchedAnime) {
-    //     setRecommending(false);
-    //     toast({ description: 'Request limit exceeded.', variant: 'destructive' });
-    //     return;
-    //   }
-    //   if (fetchedAnime.hasPrequel) {
-    //     continue;
-    //   }
-    //   const fetchedRecommendations = fetchedAnime.recommendations;
+      const fetchedAnimeDetails = await fetchAnimeDetails(anime.anime_id);
+      if (rateLimitExceeded(fetchedAnimeDetails)) {
+        setRecommending(false);
+        rateLimitToast();
+        return;
+      }
 
-    //   for (const recommendation of fetchedRecommendations) {
-    //     if (userList.some((userAnime) => userAnime.anime_id === recommendation.node.id)) {
-    //       continue;
-    //     }
-    //     const recommendationDetails = await fetchAnimeDetails(recommendation.node.id);
-    //     if (typeof recommendationDetails === 'undefined' || 'message' in recommendationDetails) {
-    //       setRecommending(false);
-    //       toast({ description: 'Request limit exceeded.', variant: 'destructive' });
-    //       return;
-    //     }
+      saveAnimeDetails(fetchedAnimeDetails);
 
-    //     if (!animes.find((anime) => anime.id === recommendationDetails.id)) {
-    //       animes.push({
-    //         _id: recommendationDetails.id,
-    //         title: recommendationDetails.title,
-    //         mean: recommendationDetails.mean,
-    //         image: recommendationDetails.image,
-    //         year: recommendationDetails.year,
-    //         genres: recommendationDetails.genres,
-    //         members: recommendationDetails.members,
-    //       });
-    //       setAnimeBase((prev) => [...prev, animes[animes.length - 1]]);
-    //     }
+      if (hasPrequel(fetchedAnimeDetails)) {
+        continue;
+      }
 
-    //     const seen = seenIDs.has(recommendationDetails.id);
-    //     const points = calculatePoints({
-    //       votes: recommendation.num_recommendations,
-    //       score: anime.score,
-    //       mean: recommendationDetails.mean,
-    //       members: animes.find((item) => item.id === anime.anime_id).members,
-    //     });
+      const fetchedRecommendations = fetchedAnimeDetails.recommendations;
 
-    //     setRecommendations((prev) => {
-    //       if (seen) {
-    //         return prev.map((item) =>
-    //           item.anime_id === recommendationDetails.id
-    //             ? {
-    //                 anime_id: item.anime_id,
-    //                 related_anime: [...item.related_anime, { anime_id: anime.anime_id, score: anime.score }],
-    //                 points: item.points + points,
-    //               }
-    //             : item
-    //         );
-    //       } else {
-    //         seenIDs.add(recommendationDetails.id);
-    //         return [
-    //           ...prev,
-    //           {
-    //             anime_id: recommendationDetails.id,
-    //             related_anime: [{ anime_id: anime.anime_id, score: anime.score }],
-    //             points,
-    //           },
-    //         ];
-    //       }
-    //     });
-    //   }
-    // }
+      for (const recommendation of fetchedRecommendations) {
+        if (userList.some((userAnime) => userAnime.anime_id === recommendation.anime_id)) {
+          continue;
+        }
 
+        const recommendationDetails = await fetchAnimeDetails(recommendation.anime_id);
+        if (rateLimitExceeded(recommendationDetails)) {
+          setRecommending(false);
+          rateLimitToast();
+          return;
+        }
+
+        saveAnimeRecommendationDetails(recommendationDetails);
+
+        const recommendationPoints = calculatePoints({
+          votes: recommendation.num_recommendations,
+          score: anime.score,
+          mean: recommendationDetails.mean,
+          members: userListAnimes.find((item) => item._id === anime.anime_id).members,
+        });
+
+        const index = animeRecommendations.findIndex((item) => item.anime_id === recommendationDetails.id);
+        if (index !== -1) {
+          animeRecommendations[index].related_anime.push({
+            anime_id: anime.anime_id,
+            title: anime.title,
+            score: anime.score,
+          });
+          animeRecommendations[index].points += recommendationPoints;
+        } else {
+          animeRecommendations.push({
+            anime_id: recommendationDetails.id,
+            title: recommendationDetails.title,
+            image: recommendationDetails.image,
+            mean: recommendationDetails.mean,
+            genres: recommendationDetails.genres,
+            year: recommendationDetails.year,
+            points: recommendationPoints,
+            related_anime: [{ anime_id: anime.anime_id, title: anime.title, score: anime.score }],
+          });
+        }
+      }
+    }
+
+    formattedAnimeRecommendations = formatUserAnimeRecommendations(animeRecommendations);
+    console.log(formattedAnimeRecommendations);
+    saveUserAnimeRecommendations(currentUser, formattedAnimeRecommendations);
+    setUserAnimeRecommendations(formattedAnimeRecommendations);
     setRecommending(false);
   }
 
@@ -141,7 +139,7 @@ export default function Recommendations({ currentUser }) {
         <span className="italic">matte kudasai</span>
       </div>
     </div>
-  ) : recommendations.length === 0 ? (
+  ) : userAnimeRecommendations.length === 0 ? (
     <div className="flex flex-col h-full items-center justify-center gap-8 text-center">
       <div>
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
@@ -158,19 +156,20 @@ export default function Recommendations({ currentUser }) {
         </Button>
       </div>
       <div className="flex flex-col gap-3">
-        {recommendations
-          .sort((a, b) => b.points * b.related_anime.length - a.points * a.related_anime.length)
-          .map((r, index) => (
-            <Anime
-              key={index}
-              anime={animeBase.find((anime) => anime.id === r.anime_id)}
-              points={r.points * r.related_anime.length}
-              relatedAnime={r.related_anime.map((item) => ({
-                ...animeBase.find((anime) => anime.id === item.anime_id),
-                score: item.score,
-              }))}
-            />
-          ))}
+        {userAnimeRecommendations.map((r, index) => (
+          <Anime
+            key={index}
+            anime={{
+              title: r.title,
+              image: r.image,
+              year: r.year,
+              genres: r.genres,
+              mean: r.mean,
+            }}
+            points={r.points}
+            relatedAnime={r.related_anime}
+          />
+        ))}
       </div>
     </div>
   );
