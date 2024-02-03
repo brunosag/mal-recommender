@@ -4,13 +4,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from './ui/button';
 import { ChevronDownIcon } from 'lucide-react';
 
-export default function Anime({ anime, points, relatedAnime }) {
+export default function Anime({ anime, points, relatedAnime, ...props }) {
   const MALUrl = `https://myanimelist.net/anime/${anime.id}`;
-  console.log(anime);
-  console.log(relatedAnime);
+	// console.log(relatedAnime);
 
   return (
-    <div className="rounded-md flex justify-between p-2 border gap-5">
+    <div className="rounded-md flex justify-between p-2 border gap-5" {...props}>
       <div className="flex gap-4">
         <Link href={MALUrl} target="_blank">
           <Image
@@ -54,13 +53,13 @@ export default function Anime({ anime, points, relatedAnime }) {
           <PopoverContent className="w-fit">
             <div>
               {relatedAnime.map((anime) => (
-                <div key={anime.id} className="flex gap-2 items-center">
+                <div key={anime.anime_id} className="flex gap-2 items-center">
                   <Link
-                    href={`https://myanimelist.net/anime/${anime.id}`}
+                    href={`https://myanimelist.net/anime/${anime.anime_id}`}
                     target="_blank"
                     className="inline-block text-sm"
                   >
-                    {anime.title?.en || anime.title?.jp || anime.title}
+                    {anime.title?.en || anime.title?.jp}
                   </Link>
                   <span className="text-foreground/50 text-sm">{anime.score === 0 ? '-' : anime.score}</span>
                 </div>

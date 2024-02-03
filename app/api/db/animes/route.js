@@ -13,14 +13,22 @@ export async function POST(request) {
 
 export async function GET(request) {
   const params = new URLSearchParams(new URL(request.url).search);
-  const id = params.get('id');
+  const ids = params
+    .get('id')
+    .split(',')
+    .map((id) => parseInt(id, 10));
 
   const client = await clientPromise;
   const db = client.db('db');
 
   let result;
-  if (id) {
-    result = await db.collection('animes').findOne({ _id: parseInt(id, 10) });
+  if (ids.length > 1) {
+    result = await db
+      .collection('animes')
+      .find({ _id: { $in: ids } })
+      .toArray();
+  } else if (ids.length === 1) {
+    result = await db.collection('animes').findOne({ _id: parseInt(ids[0], 10) });
   } else {
     result = await db.collection('animes').find();
   }

@@ -21,7 +21,7 @@ import Image from 'next/image';
 import Loading from '@/app/loading';
 import loadingMew from '@/public/loading-mew.gif';
 import { getUserAnimeRecommendations } from '@/lib/db/users';
-import { getAnime } from '@/lib/db/animes';
+import { getAnime, getAnimes } from '@/lib/db/animes';
 
 export default function Recommendations({ currentUser }) {
   const [loading, setLoading] = useState(true);
@@ -37,27 +37,33 @@ export default function Recommendations({ currentUser }) {
     async function startRecommendationParameters() {
       let newUserAnimeRecommendations = [];
       const userAnimeRecommendations = await getUserAnimeRecommendations(currentUser._id);
-      /*
-      if (userAnimeRecommendations.length !== 0) {
-        newUserAnimeRecommendations = await userAnimeRecommendations.map(async (recommendation) => {
-          const recommendationDetails = await getAnime(recommendation.anime_id);
-          return {
-            anime_id: recommendation.anime_id,
-            title: recommendationDetails.title,
-            image: recommendationDetails.image,
-            mean: recommendationDetails.mean,
-            genres: recommendationDetails.genres,
-            year: recommendationDetails.year,
-            points: recommendation.points,
-            related_anime: recommendation.related_anime,
-          };
-        });
-      }*/
 
-      //console.log(newUserAnimeRecommendations);
-      setUserAnimeRecommendations(newUserAnimeRecommendations);
+      if (userAnimeRecommendations.length !== 0) {
+        const userAnimeRecommendationsIds = userAnimeRecommendations.map((recommendation) => recommendation.anime_id);
+        const userAnimeRecommendationsDetails = await getAnimes(userAnimeRecommendationsIds);
+
+        for (const recommendation of userAnimeRecommendationsDetails) {
+          const matchingRecommendation = userAnimeRecommendations.find(
+            (userRecommendation) => userRecommendation.anime_id === recommendation._id
+          );
+
+          newUserAnimeRecommendations.push({
+            anime_id: recommendation._id,
+            title: recommendation.title,
+            image: recommendation.image,
+            mean: recommendation.mean,
+            genres: recommendation.genres,
+            year: recommendation.year,
+            points: matchingRecommendation.points,
+            related_anime: matchingRecommendation.related_anime,
+          });
+        }
+      }
+
+      setUserAnimeRecommendations(newUserAnimeRecommendations.sort((a, b) => b.points - a.points));
       setLoading(false);
     }
+
     startRecommendationParameters();
   }, []);
 
@@ -72,7 +78,7 @@ export default function Recommendations({ currentUser }) {
     }
 
     const userListAnimes = await saveAnimeFromUserList(fetchedAnimes);
-    const userList = saveUserAnimeList(currentUser, fetchedAnimes);
+    const userList = await saveUserAnimeList(currentUser, fetchedAnimes);
 
     let animeRecommendations = [];
 
@@ -118,10 +124,11 @@ export default function Recommendations({ currentUser }) {
         });
 
         const index = animeRecommendations.findIndex((item) => item.anime_id === recommendationDetails.id);
-        if (index !== -1) {
+        const recommendationFound = index !== -1;
+        if (recommendationFound) {
           animeRecommendations[index].related_anime.push({
             anime_id: anime.anime_id,
-            title: anime.title,
+            title: fetchedAnimeDetails.title,
             score: anime.score,
           });
           animeRecommendations[index].points += recommendationPoints;
@@ -134,17 +141,16 @@ export default function Recommendations({ currentUser }) {
             genres: recommendationDetails.genres,
             year: recommendationDetails.year,
             points: recommendationPoints,
-            related_anime: [{ anime_id: anime.anime_id, title: anime.title, score: anime.score }],
+            related_anime: [{ anime_id: anime.anime_id, title: fetchedAnimeDetails.title, score: anime.score }],
           });
         }
       }
     }
 
     const formattedAnimeRecommendations = formatUserAnimeRecommendations(animeRecommendations);
-    console.log(formattedAnimeRecommendations);
     saveUserAnimeRecommendations(currentUser, formattedAnimeRecommendations);
     if (formattedAnimeRecommendations.length !== 0) {
-      setUserAnimeRecommendations(formattedAnimeRecommendations);
+      setUserAnimeRecommendations(formattedAnimeRecommendations.sort((a, b) => b.points - a.points));
     }
     setRecommending(false);
   }
@@ -178,10 +184,11 @@ export default function Recommendations({ currentUser }) {
         </Button>
       </div>
       <div className="flex flex-col gap-3">
-        {userAnimeRecommendations.map((r, index) => (
+        {userAnimeRecommendations.map((r) => (
           <Anime
-            key={index}
+            key={r.anime_id}
             anime={{
+              id: r.anime_id,
               title: r.title,
               image: r.image,
               year: r.year,
