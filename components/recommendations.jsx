@@ -21,6 +21,7 @@ import Image from 'next/image';
 import Loading from '@/app/loading';
 import loadingMew from '@/public/loading-mew.gif';
 import { getUserAnimeRecommendations } from '@/lib/db/users';
+import { getAnime } from '@/lib/db/animes';
 
 export default function Recommendations({ currentUser }) {
   const [loading, setLoading] = useState(true);
@@ -34,7 +35,26 @@ export default function Recommendations({ currentUser }) {
 
   useEffect(() => {
     async function startRecommendationParameters() {
-      const newUserAnimeRecommendations = await getUserAnimeRecommendations(currentUser._id);
+      let newUserAnimeRecommendations = [];
+      const userAnimeRecommendations = await getUserAnimeRecommendations(currentUser._id);
+      /*
+      if (userAnimeRecommendations.length !== 0) {
+        newUserAnimeRecommendations = await userAnimeRecommendations.map(async (recommendation) => {
+          const recommendationDetails = await getAnime(recommendation.anime_id);
+          return {
+            anime_id: recommendation.anime_id,
+            title: recommendationDetails.title,
+            image: recommendationDetails.image,
+            mean: recommendationDetails.mean,
+            genres: recommendationDetails.genres,
+            year: recommendationDetails.year,
+            points: recommendation.points,
+            related_anime: recommendation.related_anime,
+          };
+        });
+      }*/
+
+      //console.log(newUserAnimeRecommendations);
       setUserAnimeRecommendations(newUserAnimeRecommendations);
       setLoading(false);
     }
@@ -65,7 +85,7 @@ export default function Recommendations({ currentUser }) {
       if (rateLimitExceeded(fetchedAnimeDetails)) {
         setRecommending(false);
         rateLimitToast();
-        return;
+        break;
       }
 
       saveAnimeDetails(fetchedAnimeDetails);
@@ -85,7 +105,7 @@ export default function Recommendations({ currentUser }) {
         if (rateLimitExceeded(recommendationDetails)) {
           setRecommending(false);
           rateLimitToast();
-          return;
+          break;
         }
 
         saveAnimeRecommendationDetails(recommendationDetails);
@@ -120,10 +140,12 @@ export default function Recommendations({ currentUser }) {
       }
     }
 
-    formattedAnimeRecommendations = formatUserAnimeRecommendations(animeRecommendations);
+    const formattedAnimeRecommendations = formatUserAnimeRecommendations(animeRecommendations);
     console.log(formattedAnimeRecommendations);
     saveUserAnimeRecommendations(currentUser, formattedAnimeRecommendations);
-    setUserAnimeRecommendations(formattedAnimeRecommendations);
+    if (formattedAnimeRecommendations.length !== 0) {
+      setUserAnimeRecommendations(formattedAnimeRecommendations);
+    }
     setRecommending(false);
   }
 

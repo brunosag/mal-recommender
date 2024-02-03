@@ -6,6 +6,8 @@ import { ChevronDownIcon } from 'lucide-react';
 
 export default function Anime({ anime, points, relatedAnime }) {
   const MALUrl = `https://myanimelist.net/anime/${anime.id}`;
+  console.log(anime);
+  console.log(relatedAnime);
 
   return (
     <div className="rounded-md flex justify-between p-2 border gap-5">
@@ -58,7 +60,7 @@ export default function Anime({ anime, points, relatedAnime }) {
                     target="_blank"
                     className="inline-block text-sm"
                   >
-                    {anime.title}
+                    {anime.title?.en || anime.title?.jp || anime.title}
                   </Link>
                   <span className="text-foreground/50 text-sm">{anime.score === 0 ? '-' : anime.score}</span>
                 </div>
