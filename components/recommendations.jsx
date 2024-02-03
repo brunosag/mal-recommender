@@ -12,6 +12,7 @@ import {
   saveAnimeFromUserList,
   saveAnimeRecommendationDetails,
   saveAnimeRecommendationsGenres,
+  saveAnimeRecommendationsMediaTypes,
   saveUserAnimeList,
   saveUserAnimeRecommendations,
 } from '@/lib/data';
@@ -157,6 +158,7 @@ export default function Recommendations({ currentUser }) {
       await saveUserAnimeRecommendations(currentUser, formattedAnimeRecommendations);
       setUserAnimeRecommendations(formattedAnimeRecommendations);
       await saveAnimeRecommendationsGenres(currentUser, formattedAnimeRecommendations);
+      await saveAnimeRecommendationsMediaTypes(currentUser, formattedAnimeRecommendations);
     }
     setRecommending(false);
   }

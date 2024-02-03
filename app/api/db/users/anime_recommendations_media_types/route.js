@@ -9,8 +9,8 @@ export async function GET(request) {
 
   const result = await db.collection('users').findOne({ _id: parseInt(user_id, 10) });
 
-  const genresList = result.anime_recommendations_genres;
-  return Response.json(genresList);
+  const mediaTypesList = result.anime_recommendations_media_types;
+  return Response.json(mediaTypesList);
 }
 
 export async function PATCH(request) {
@@ -20,10 +20,10 @@ export async function PATCH(request) {
   const client = await clientPromise;
   const db = client.db('db');
 
-  const genresList = await request.json();
+  const mediaTypesList = await request.json();
 
   const filter = { _id: parseInt(user_id, 10) };
-  const update = { $set: { anime_recommendations_genres: genresList } };
+  const update = { $set: { anime_recommendations_media_types: mediaTypesList } };
 
   const result = await db.collection('users').findOneAndUpdate(filter, update);
 
