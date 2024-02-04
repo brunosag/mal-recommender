@@ -16,7 +16,7 @@ export default function Header() {
     if (localStorage.getItem('access_token')) {
       setIsLoggedIn(true);
     }
-  }, []);
+  }, [loading]);
 
   if (loading || !isLoggedIn) {
     return null;
