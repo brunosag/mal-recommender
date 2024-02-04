@@ -29,7 +29,7 @@ export async function PATCH(request) {
 
   const userInfo = await request.json();
 
-  const filter = { _id: userInfo._id };
+  const filter = { _id: userInfo?._id };
   const update = { $set: userInfo };
 
   const result = await db.collection('users').findOneAndUpdate(filter, update);

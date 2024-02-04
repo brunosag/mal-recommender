@@ -1,12 +1,16 @@
-// - VERIFICAR RENDERIZAÇÃO DE COMPONENTES DO SITE (return)
-// - QUANDO COMPLETOS OS ÍTENS ACIMA, COLOCAR CÓDIGO DE SALVAR GÊNEROS NA FUNÇÃO DE SALVAR LISTA DE RECOMENDAÇÃO
-// - QUANDO COMPLETOS OS ÍTENS ACIMA, REFATORAR CÓDIGO DOS COMPONENTES DESTE ARQUIVO
-
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { fetchUserAnimeList, fetchAnimeDetails } from '@/lib/fetch';
 import { calculatePoints, formatUserAnimeRecommendations, hasPrequel, rateLimitExceeded } from '@/lib/utils';
+import { fetchUserAnimeList, fetchAnimeDetails } from '@/lib/fetch';
+import { getAnimes } from '@/lib/db/animes';
+import { getUserAnimeRecommendations } from '@/lib/db/users';
+import { useEffect, useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import Anime from '@/components/anime';
+import Image from 'next/image';
+import Loading from '@/app/loading';
+import loadingMew from '@/public/loading-mew.gif';
 import {
   saveAnimeDetails,
   saveAnimeFromUserList,
@@ -15,15 +19,8 @@ import {
   saveAnimeRecommendationsMediaTypes,
   saveUserAnimeList,
   saveUserAnimeRecommendations,
+  saveUserLastFetchedAnime,
 } from '@/lib/data';
-import { useEffect, useState } from 'react';
-import { useToast } from '@/components/ui/use-toast';
-import Anime from '@/components/anime';
-import Image from 'next/image';
-import Loading from '@/app/loading';
-import loadingMew from '@/public/loading-mew.gif';
-import { getUserAnimeRecommendations } from '@/lib/db/users';
-import { getAnimes } from '@/lib/db/animes';
 
 export default function Recommendations({ currentUser }) {
   const [loading, setLoading] = useState(true);
@@ -85,11 +82,20 @@ export default function Recommendations({ currentUser }) {
     const userList = await saveUserAnimeList(currentUser, fetchedAnimes);
 
     let animeRecommendations = [];
+    let lastFetchedAnime = {
+      anime_id: null,
+      anime_recommendation_id: null,
+    };
 
     for (const anime of userList) {
       if (anime.score < 7) {
         continue;
       }
+
+      lastFetchedAnime = {
+        anime_id: anime.anime_id,
+        anime_recommendation_id: null,
+      };
 
       const fetchedAnimeDetails = await fetchAnimeDetails(anime.anime_id);
       if (rateLimitExceeded(fetchedAnimeDetails)) {
@@ -110,6 +116,8 @@ export default function Recommendations({ currentUser }) {
         if (userList.some((userAnime) => userAnime.anime_id === recommendation.anime_id)) {
           continue;
         }
+
+        lastFetchedAnime.anime_recommendation_id = recommendation.anime_id;
 
         const recommendationDetails = await fetchAnimeDetails(recommendation.anime_id);
         if (rateLimitExceeded(recommendationDetails)) {
@@ -156,10 +164,11 @@ export default function Recommendations({ currentUser }) {
     const formattedAnimeRecommendations = formatUserAnimeRecommendations(animeRecommendations);
     if (formattedAnimeRecommendations.length !== 0) {
       await saveUserAnimeRecommendations(currentUser, formattedAnimeRecommendations);
-      setUserAnimeRecommendations(formattedAnimeRecommendations);
       await saveAnimeRecommendationsGenres(currentUser, formattedAnimeRecommendations);
       await saveAnimeRecommendationsMediaTypes(currentUser, formattedAnimeRecommendations);
+      setUserAnimeRecommendations(formattedAnimeRecommendations);
     }
+    await saveUserLastFetchedAnime(currentUser, lastFetchedAnime);
     setRecommending(false);
   }
 
