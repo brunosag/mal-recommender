@@ -1,12 +1,12 @@
 'use client';
 
 import { BookIcon, TvIcon } from 'lucide-react';
-import { SectionContext } from './context/section-provider';
+import { DataContext } from './context/data-provider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useContext } from 'react';
 
 export default function SectionSwitch() {
-  const { section, setSection } = useContext(SectionContext);
+  const { section, setSection } = useContext(DataContext);
 
   return (
     <Tabs value={section} onValueChange={setSection}>
