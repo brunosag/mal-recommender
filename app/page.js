@@ -5,7 +5,6 @@ import { authorize } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { DataContext } from '@/components/context/data-provider';
 import { useContext, useEffect } from 'react';
-import Loading from './loading';
 import Recommendations from '../components/recommendations';
 
 export default function Home() {
