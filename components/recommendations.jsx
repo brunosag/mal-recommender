@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { calculatePoints, formatUserAnimeRecommendations, hasPrequel, rateLimitExceeded } from '@/lib/utils';
+import { calculatePoints, formatMediaType, formatUserAnimeRecommendations, hasPrequel, rateLimitExceeded } from '@/lib/utils';
 import { fetchUserAnimeList, fetchAnimeDetails } from '@/lib/fetch';
 import { getAnimes } from '@/lib/db/animes';
 import { getUserAnimeRecommendations } from '@/lib/db/users';
@@ -176,31 +176,38 @@ export default function Recommendations({ currentUser }) {
     return <Loading />;
   }
 
-  return recommending ? (
-    <div className="flex flex-col h-full items-center justify-center gap-6">
-      <Image src={loadingMew} alt="Loading Mew" className="w-48" />
-      <div className="flex flex-col text-center gap-1">
-        <span className="text-xl/[1] font-semibold">Recommending...</span>
-        <span className="italic">matte kudasai</span>
+  if (recommending) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center gap-6">
+        <Image src={loadingMew} alt="Loading Mew" className="w-48" />
+        <div className="flex flex-col text-center gap-1">
+          <span className="text-xl/[1] font-semibold">Recommending...</span>
+          <span className="italic">matte kudasai</span>
+        </div>
       </div>
-    </div>
-  ) : userAnimeRecommendations.length === 0 ? (
-    <div className="flex flex-col h-full items-center justify-center gap-8 text-center">
-      <div>
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
-        <p className="text-lg text-muted-foreground">It may take a while, though!</p>
+    );
+  }
+
+  if (userAnimeRecommendations.length === 0) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center gap-8 text-center">
+        <div>
+          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
+          <p className="text-lg text-muted-foreground">It may take a while, though!</p>
+        </div>
+        <Button onClick={refreshAnimeRecommendations}>Recommend</Button>
       </div>
-      <Button onClick={refreshAnimeRecommendations}>Recommend</Button>
-    </div>
-  ) : (
-    <div className="container h-full p-8 flex flex-col gap-5">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl/[1] font-semibold">Your Recommendations</h1>
-        <Button onClick={refreshAnimeRecommendations} className="gap-1">
+    );
+  }
+
+  return (
+    <div className="container h-fit p-8 flex flex-col gap-5">
+      <div className="flex justify-end">
+        <Button onClick={refreshAnimeRecommendations} variant="ghost">
           Refresh
         </Button>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         {userAnimeRecommendations.map((r) => (
           <Anime
             key={r.anime_id}
@@ -211,6 +218,7 @@ export default function Recommendations({ currentUser }) {
               year: r.year,
               genres: r.genres,
               mean: r.mean,
+              media_type: formatMediaType(r.media_type),
             }}
             points={r.points}
             relatedAnime={r.related_anime}

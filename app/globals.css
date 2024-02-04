@@ -45,9 +45,18 @@
   body {
     @apply bg-background text-foreground;
     background-image: url('/bg.png');
+    background-attachment: fixed;
   }
 }
 
 .bg-component {
   background-color: rgba(0, 0, 0, 0.2);
+}
+
+.bg-image {
+  background-image: url('/bg.png');
+  background-size: auto;
+  background-position: 80%;
+  background-clip: padding-box;
+  background-origin: padding-box;
 }
