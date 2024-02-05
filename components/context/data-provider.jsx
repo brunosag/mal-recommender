@@ -15,9 +15,9 @@ export default function DataProvider({ children }) {
         section,
         setSection,
         user,
-				setUser,
-				loading,
-				setLoading
+        setUser,
+        loading,
+        setLoading,
       }}
     >
       {children}

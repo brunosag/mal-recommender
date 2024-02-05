@@ -24,7 +24,7 @@ export default function Header() {
 
   return (
     <header className="top-0 z-40 w-full">
-      <div className="container py-5 grid grid-cols-3 items-center">
+      <div className="container w-5/6 py-5 grid grid-cols-3 items-center">
         <Link href="/" className="flex items-center gap-4">
           <Image src={logoWhite} alt="logo" className="h-10 w-10" />
           <h1 className="text-xl/[1] font-extrabold">mal-recommender</h1>

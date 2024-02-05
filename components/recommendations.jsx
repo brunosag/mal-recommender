@@ -1,11 +1,18 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { calculatePoints, formatMediaType, formatUserAnimeRecommendations, hasPrequel, rateLimitExceeded } from '@/lib/utils';
+import {
+  calculatePoints,
+  formatMediaType,
+  formatUserAnimeRecommendations,
+  hasPrequel,
+  rateLimitExceeded,
+  sortAnimeRecommendationsList,
+} from '@/lib/utils';
 import { fetchUserAnimeList, fetchAnimeDetails } from '@/lib/fetch';
 import { getAnimes } from '@/lib/db/animes';
 import { getUserAnimeRecommendations } from '@/lib/db/users';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Anime from '@/components/anime';
 import Image from 'next/image';
@@ -21,11 +28,16 @@ import {
   saveUserAnimeRecommendations,
   saveUserLastFetchedAnime,
 } from '@/lib/data';
+import Sorter from './sorter';
+import FilterOptions from './filter-options';
+import { DataContext } from './context/data-provider';
 
 export default function Recommendations({ currentUser }) {
   const [loading, setLoading] = useState(true);
   const [recommending, setRecommending] = useState(false);
   const [userAnimeRecommendations, setUserAnimeRecommendations] = useState([]);
+  const [animeSortType, setAnimeSortType] = useState('Points');
+  const [mangaSortType, setMangaSortType] = useState('Points');
   const { toast } = useToast();
 
   function rateLimitToast() {
@@ -63,12 +75,15 @@ export default function Recommendations({ currentUser }) {
 
       setUserAnimeRecommendations(newUserAnimeRecommendations.sort((a, b) => b.points - a.points));
       setLoading(false);
+      setAnimeSortType('Points');
     }
 
     startRecommendationParameters();
   }, []);
 
-  async function refreshAnimeRecommendations() {
+  async function continueRecommendations() {}
+
+  async function refreshRecommendations() {
     setRecommending(true);
 
     const fetchedAnimes = await fetchUserAnimeList();
@@ -182,7 +197,7 @@ export default function Recommendations({ currentUser }) {
         <Image src={loadingMew} alt="Loading Mew" className="w-48" />
         <div className="flex flex-col text-center gap-1">
           <span className="text-xl/[1] font-semibold">Recommending...</span>
-          <span className="italic">matte kudasai</span>
+          <span className="italic">Matte kudasai!</span>
         </div>
       </div>
     );
@@ -195,20 +210,29 @@ export default function Recommendations({ currentUser }) {
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
           <p className="text-lg text-muted-foreground">It may take a while, though!</p>
         </div>
-        <Button onClick={refreshAnimeRecommendations}>Recommend</Button>
+        <Button onClick={refreshRecommendations}>Recommend</Button>
       </div>
     );
   }
 
   return (
-    <div className="container h-fit p-8 flex flex-col gap-5">
-      <div className="flex justify-end">
-        <Button onClick={refreshAnimeRecommendations} variant="ghost">
-          Refresh
-        </Button>
+    <div className="container w-5/6 h-fit py-8 flex flex-col gap-5">
+      <div className="rounded-[1.75rem] flex justify-between py-2 px-5 bg-black/[0.15] gap-5">
+        <div className="flex justify-between items-center gap-9">
+          <Sorter sortType={animeSortType} setSortType={setAnimeSortType} />
+          <FilterOptions />
+        </div>
+        <div className="flex justify-between items-center gap-2">
+          <Button onClick={continueRecommendations} variant="ghost" className="font-semibold text-xs h-8">
+            Continue
+          </Button>
+          <Button onClick={refreshRecommendations} variant="ghost" className="font-semibold text-xs h-8">
+            Refresh
+          </Button>
+        </div>
       </div>
       <div className="flex flex-col gap-4">
-        {userAnimeRecommendations.map((r) => (
+        {sortAnimeRecommendationsList(userAnimeRecommendations, animeSortType).map((r) => (
           <Anime
             key={r.anime_id}
             anime={{

@@ -18,8 +18,8 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-					<DataProvider>
-						<Loading />
+          <DataProvider>
+            <Loading />
             <div className="flex flex-col h-screen">
               <Header />
               {children}
