@@ -4,17 +4,18 @@ import { authenticate } from '@/lib/data';
 import { authorize } from '@/lib/auth';
 import { Button } from '@nextui-org/react';
 import { DataContext } from '@/components/context/data-provider';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Recommendations from '../components/recommendations';
 
 export default function Home() {
-  const { user, setUser, loading, setLoading } = useContext(DataContext);
+  const { user, setUser } = useContext(DataContext);
+  const [autheticating, setAutheticating] = useState(true);
 
   useEffect(() => {
-    authenticate(setUser, setLoading);
+    authenticate(setUser, setAutheticating);
   }, []);
 
-  if (loading) {
+  if (autheticating) {
     return null;
   }
 

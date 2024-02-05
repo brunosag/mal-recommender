@@ -36,8 +36,7 @@ import GenresFilter from './genres-filter';
 export default function Recommendations() {
   const { toast } = useToast();
   const { user } = useContext(DataContext);
-  const { section, setSection } = useContext(DataContext);
-  const [loading, setLoading] = useState(true);
+  const { section, setSection, loading, setLoading } = useContext(DataContext);
   const [recommending, setRecommending] = useState(false);
   const [userAnimeRecommendations, setUserAnimeRecommendations] = useState([]);
   const [animeSortType, setAnimeSortType] = useState(new Set(['points']));
