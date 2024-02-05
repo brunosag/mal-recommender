@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@nextui-org/react';
 import {
   calculatePoints,
   formatMediaType,
@@ -33,12 +33,13 @@ import FilterOptions from './filter-options';
 import { DataContext } from './context/data-provider';
 
 export default function Recommendations({ currentUser }) {
+  const { toast } = useToast();
+  const { section, setSection } = useContext(DataContext);
   const [loading, setLoading] = useState(true);
   const [recommending, setRecommending] = useState(false);
   const [userAnimeRecommendations, setUserAnimeRecommendations] = useState([]);
-  const [animeSortType, setAnimeSortType] = useState('Points');
-  const [mangaSortType, setMangaSortType] = useState('Points');
-  const { toast } = useToast();
+  const [animeSortType, setAnimeSortType] = useState('points');
+  const [mangaSortType, setMangaSortType] = useState('points');
 
   function rateLimitToast() {
     toast({ description: 'Request limit exceeded.', variant: 'destructive' });
@@ -73,9 +74,9 @@ export default function Recommendations({ currentUser }) {
         }
       }
 
-      setUserAnimeRecommendations(newUserAnimeRecommendations.sort((a, b) => b.points - a.points));
+      setUserAnimeRecommendations(newUserAnimeRecommendations);
       setLoading(false);
-      setAnimeSortType('Points');
+      setAnimeSortType('points');
     }
 
     startRecommendationParameters();
@@ -223,10 +224,10 @@ export default function Recommendations({ currentUser }) {
           <FilterOptions />
         </div>
         <div className="flex justify-between items-center gap-2">
-          <Button onClick={continueRecommendations} variant="ghost" className="font-semibold text-xs h-8">
+          <Button onPress={continueRecommendations} variant="light" radius="full" className="font-semibold text-xs h-8">
             Continue
           </Button>
-          <Button onClick={refreshRecommendations} variant="ghost" className="font-semibold text-xs h-8">
+          <Button onPress={refreshRecommendations} variant="light" radius="full" className="font-semibold text-xs h-8">
             Refresh
           </Button>
         </div>

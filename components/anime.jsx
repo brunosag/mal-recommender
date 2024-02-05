@@ -1,9 +1,8 @@
-import { Button } from './ui/button';
 import { ChevronDownIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatMediaType } from '@/lib/utils';
+import { Button } from '@nextui-org/react';
 
 export default function Anime({ anime, points, relatedAnime, ...props }) {
   const MALUrl = `https://myanimelist.net/anime/${anime.id}`;

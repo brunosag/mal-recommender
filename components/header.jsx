@@ -29,7 +29,7 @@ export default function Header() {
           <Image src={logoWhite} alt="logo" className="h-10 w-10" />
           <h1 className="text-xl/[1] font-extrabold">mal-recommender</h1>
         </Link>
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center">
           <SectionSwitch />
         </div>
         <div className="flex justify-end">{isLoggedIn && <UserMenu />}</div>
