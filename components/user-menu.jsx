@@ -14,13 +14,14 @@ import {
   DropdownTrigger,
   Link,
 } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 export default function UserMenu() {
   const { user, setLoading } = useContext(DataContext);
   const [buttonFocus, setButtonFocus] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <Dropdown
@@ -52,7 +53,15 @@ export default function UserMenu() {
             base: 'mb-0',
           }}
         >
-          <DropdownItem key="statistics" onPress={() => setLoading(true) || router.push('/statistics')}>
+          <DropdownItem
+            key="statistics"
+            onPress={() => {
+              if (pathname !== '/statistics') {
+                setLoading(true);
+                router.push('/statistics');
+              }
+            }}
+          >
             Statistics
           </DropdownItem>
           <DropdownItem key="logout" color="danger" className="text-danger" onPress={logout}>

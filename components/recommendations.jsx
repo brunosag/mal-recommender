@@ -228,7 +228,7 @@ export default function Recommendations() {
     return (
       <div className="flex flex-col grow items-center justify-center gap-6">
         <Image src={loadingMew} alt="Loading Mew" className="w-48" />
-        <div className="flex flex-col text-center gap-1 animate-pulse duration-100">
+        <div className="flex flex-col text-center gap-1 animate-pulse">
           <span className="text-2xl/[1] font-semibold">Recommending</span>
           <span className="italic font-light">matte kudasai!</span>
         </div>
@@ -238,12 +238,14 @@ export default function Recommendations() {
 
   if (userAnimeRecommendations.length === 0) {
     return (
-      <div className="flex flex-col h-full items-center justify-center gap-8 text-center">
+      <div className="flex flex-col grow items-center justify-center gap-8 text-center">
         <div>
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get your recommendations!</h1>
           <p className="text-lg text-muted-foreground">It may take a while, though!</p>
         </div>
-        <Button onClick={refreshRecommendations}>Recommend</Button>
+        <Button variant="flat" radius="full" onClick={refreshRecommendations}>
+          Recommend
+        </Button>
       </div>
     );
   }
