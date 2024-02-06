@@ -32,14 +32,20 @@ export default function UserMenu() {
       <DropdownTrigger>
         <Button className="flex items-center min-w-fit gap-1 p-[0.35rem] w-fit h-fit" variant="light" radius="full">
           <Avatar showFallback src={user.image} fallback={user.name[0].toUpperCase()} />
-          <ChevronDownIcon
-            className={cn('w-4 h-4 transition-transform !duration-150', { 'rotate-180': buttonFocus })}
-          />
+          <ChevronDownIcon className={cn('w-4 h-4 transition-transform duration-75', { 'rotate-180': buttonFocus })} />
         </Button>
       </DropdownTrigger>
       <DropdownMenu classNames={{ base: 'mb-0' }}>
         <DropdownSection
-          title={user.name}
+          title={
+            <Link
+              href={`https://myanimelist.net/profile/${user.name}`}
+              target="_blank"
+              className="text-xs text-gray-450"
+            >
+              {user.name}
+            </Link>
+          }
           classNames={{
             heading: 'mt-1 px-2 block w-full text-left border-b pb-[0.65rem]',
             group: 'mt-1',

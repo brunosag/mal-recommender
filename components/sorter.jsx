@@ -16,7 +16,7 @@ export default function Sorter({ sortType, setSortType, sortIncreasing, setSortI
       >
         <ArrowDownWideNarrow
           size={20}
-          className={cn('text-white/80 transition-transform duration-25', sortIncreasing && 'rotate-180')}
+          className={cn('text-white/80 transition-transform duration-75', sortIncreasing && 'rotate-180')}
         />
       </Button>
       <div className="-ml-2 w-32">

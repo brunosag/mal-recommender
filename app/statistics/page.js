@@ -59,7 +59,7 @@ export default function Statistics() {
 
   return (
     <div className="grow flex flex-col items-center container w-5/6 gap-8 py-8">
-      <h1 className="text-3xl font-extralight">Statistics</h1>
+      <h1 className="text-3xl font-extralight font-semibold">Statistics</h1>
       <div className="w-full h-fit flex flex-col gap-5">
         <div className="text-white/40 text-xs grid grid-cols-6">
           <p>GENRE</p>

@@ -19,7 +19,7 @@ export default function YearsFilter({ yearsFilter, setYearsFilter, yearsInterval
           <span className="text-xs font-semibold text-white/80">
             {formatYearInterval(yearsFilter, yearsInterval.initial_year, yearsInterval.final_year)}
           </span>
-          <ChevronDownIcon className={cn('w-4 h-4 transition-transform duration-25', buttonFocus && 'rotate-180')} />
+          <ChevronDownIcon className={cn('w-4 h-4 transition-transform duration-75', buttonFocus && 'rotate-180')} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="h-72">
