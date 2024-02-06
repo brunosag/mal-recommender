@@ -42,6 +42,7 @@ export default function Recommendations() {
   const [recommending, setRecommending] = useState(false);
   const [userAnimeRecommendations, setUserAnimeRecommendations] = useState([]);
   const [animeSortType, setAnimeSortType] = useState(new Set(['points']));
+  const [animeSortIncreasing, setAnimeSortIncreasing] = useState(false);
   const [mangaSortType, setMangaSortType] = useState(new Set(['points']));
   const [animeGenresFilter, setAnimeGenresFilter] = useState(new Set());
   const [animeGenresCollection, setAnimeGenresCollection] = useState([]);
@@ -101,6 +102,7 @@ export default function Recommendations() {
       setAnimeYearsInterval(newAnimeYearsInterval);
       setAnimeYearsFilter(newAnimeYearsInterval);
       setAnimeSortType(new Set(['points']));
+      setAnimeSortIncreasing(false);
       setUserAnimeRecommendations(newUserAnimeRecommendations);
       setAnimeGenresCollection(newAnimeGenresCollection);
       setAnimeMediaTypesCollection(newAnimeMediaTypesCollection);
@@ -248,9 +250,14 @@ export default function Recommendations() {
     <div className="container w-5/6 h-fit py-8 flex flex-col gap-5">
       <div className="rounded-[1.75rem] flex justify-between py-2 px-5 bg-black/[0.15] gap-5">
         <div className="flex justify-between items-center gap-9">
-          <Sorter sortType={animeSortType} setSortType={setAnimeSortType} />
+          <Sorter
+            sortType={animeSortType}
+            setSortType={setAnimeSortType}
+            sortIncreasing={animeSortIncreasing}
+            setSortIncreasing={setAnimeSortIncreasing}
+          />
           <div className="flex items-center justify between gap-3">
-            <Filter size={20} className="h-8 -translate-y-[-0.1rem]" />
+            <Filter size={20} className="text-white/80 h-8 -translate-y-[-0.1rem]" />
             <GenresFilter
               genresFilter={animeGenresFilter}
               setGenresFilter={setAnimeGenresFilter}
@@ -282,7 +289,7 @@ export default function Recommendations() {
           animeRecommendationsList: userAnimeRecommendations,
           filters: { genres: animeGenresFilter, media_types: animeMediaTypesFilter, years: animeYearsFilter },
           filtersCollections: { genres: animeGenresCollection, media_types: animeMediaTypesCollection },
-          sortType: animeSortType,
+          sortType: { criteria: animeSortType, increasing: animeSortIncreasing },
         }).map((r) => (
           <Anime
             key={r.anime_id}
