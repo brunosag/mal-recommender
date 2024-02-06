@@ -1,6 +1,9 @@
 'use client';
 
+import { ArrowDownWideNarrow, ArrowLeft } from 'lucide-react';
 import { authenticate } from '@/lib/data';
+import { Button } from '@nextui-org/react';
+import { cn } from '@/lib/utils';
 import { DataContext } from '@/components/context/data-provider';
 import { getUserAnimeGenres } from '@/lib/db/users';
 import { useContext, useEffect, useState } from 'react';
@@ -21,6 +24,7 @@ const options = {
 export default function Statistics() {
   const [data, setData] = useState([]);
   const [maxCount, setMaxCount] = useState(0);
+  const [sortIncreasing, setSortIncreasing] = useState(false);
   const { user, setUser, loading, authenticating, setAutheticating, setLoading } = useContext(DataContext);
   const router = useRouter();
 
@@ -33,6 +37,7 @@ export default function Statistics() {
 
   useEffect(() => {
     authenticate(setUser, setAutheticating);
+    setSortIncreasing(false);
   }, []);
 
   useEffect(() => {
@@ -41,6 +46,7 @@ export default function Statistics() {
       const sortedUserAnimeGenres = userAnimeGenres.sort((a, b) => b.anime_ids.length - a.anime_ids.length);
       setData(sortedUserAnimeGenres);
       getMaxCount(sortedUserAnimeGenres);
+      setSortIncreasing(false);
       setLoading(false);
     }
 
@@ -48,6 +54,15 @@ export default function Statistics() {
       initialize();
     }
   }, [user]);
+
+  useEffect(() => {
+    console.log(sortIncreasing);
+    const sortedUserAnimeGenres = data.sort((a, b) =>
+      sortIncreasing ? a.anime_ids.length - b.anime_ids.length : b.anime_ids.length - a.anime_ids.length
+    );
+    setData(sortedUserAnimeGenres);
+    console.log(data);
+  }, [sortIncreasing]);
 
   if (!authenticating && !user) {
     return router.push('/');
@@ -59,7 +74,27 @@ export default function Statistics() {
 
   return (
     <div className="grow flex flex-col items-center container w-5/6 gap-8 py-8">
-      <h1 className="text-3xl font-extralight font-semibold">Statistics</h1>
+      <div className="w-full flex flex-row items-center justify-between p-2">
+        <Button isIconOnly onPress={router.back} className="h-10 w-10" variant="light" radius="full">
+          <ArrowLeft size={36} absoluteStrokeWidth={false} />
+        </Button>
+        <h1 className="text-3xl font-extralight font-semibold">Statistics</h1>
+        <Button
+          isIconOnly
+          onPress={() => {
+            setSortIncreasing(!sortIncreasing);
+          }}
+          className="h-10 w-10"
+          variant="light"
+          radius="full"
+        >
+          <ArrowDownWideNarrow
+            size={34}
+            absoluteStrokeWidth={false}
+            className={cn('text-white/80 transition-transform duration-75', sortIncreasing && 'rotate-180')}
+          />
+        </Button>
+      </div>
       <div className="w-full h-fit flex flex-col gap-5">
         <div className="text-white/40 text-xs grid grid-cols-6">
           <p>GENRE</p>
