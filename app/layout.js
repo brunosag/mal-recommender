@@ -20,7 +20,7 @@ export default async function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="dark">
           <DataProvider>
             <Loading />
-            <div className="flex flex-col h-fit">
+            <div className="flex flex-col min-h-screen h-fit">
               <Header />
               {children}
               <Toaster />
