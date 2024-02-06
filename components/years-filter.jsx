@@ -1,8 +1,8 @@
 'use client';
 
-import { formatYearInterval } from '@/lib/utils';
+import { cn, formatYearInterval } from '@/lib/utils';
 import { Button, Popover, PopoverContent, PopoverTrigger, Slider } from '@nextui-org/react';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react';
 import { useState } from 'react';
 
 export default function YearsFilter({ yearsFilter, setYearsFilter, yearsInterval }) {
@@ -19,8 +19,7 @@ export default function YearsFilter({ yearsFilter, setYearsFilter, yearsInterval
           <span className="text-xs font-semibold text-white/80">
             {formatYearInterval(yearsFilter, yearsInterval.initial_year, yearsInterval.final_year)}
           </span>
-          {(buttonFocus && <ChevronUpIcon className="w-4 h-4" />) ||
-            (!buttonFocus && <ChevronDownIcon className="w-4 h-4" />)}
+          <ChevronDownIcon className={cn('w-4 h-4 transition-transform duration-25', buttonFocus && 'rotate-180')} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="h-72">

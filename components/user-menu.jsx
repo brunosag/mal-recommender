@@ -1,10 +1,11 @@
 'use client';
 
-import { ChevronDownIcon, ChevronUpIcon, LogOutIcon } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react';
 import { DataContext } from './context/data-provider';
 import { useContext, useState } from 'react';
 import { logout } from '@/lib/auth';
 import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
+import { cn } from '@/lib/utils';
 
 export default function UserMenu() {
   const { user } = useContext(DataContext);
@@ -15,8 +16,7 @@ export default function UserMenu() {
       <DropdownTrigger>
         <Button className="flex items-center gap-3 p-2 w-fit h-fit" variant="light" radius="full">
           <Avatar showFallback isBordered color="primary" src={user.image} fallback={user.name[0].toUpperCase()} />
-          {(buttonFocus && <ChevronUpIcon className="w-4 h-4" />) ||
-            (!buttonFocus && <ChevronDownIcon className="w-4 h-4" />)}
+          <ChevronDownIcon className={cn('w-4 h-4 transition-transform duration-25', buttonFocus && 'rotate-180')} />
         </Button>
       </DropdownTrigger>
       <DropdownMenu>
