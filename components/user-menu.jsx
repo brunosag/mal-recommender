@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDownIcon, ChevronUpIcon, LogOutIcon } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react';
 import { DataContext } from './context/data-provider';
 import { useContext, useState } from 'react';
 import { logout } from '@/lib/auth';
@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 export default function UserMenu() {
-  const { user } = useContext(DataContext);
+  const { user, setLoading } = useContext(DataContext);
   const [buttonFocus, setButtonFocus] = useState(false);
   const router = useRouter();
 
@@ -46,7 +46,7 @@ export default function UserMenu() {
             base: 'mb-0',
           }}
         >
-          <DropdownItem key="statistics" onPress={() => router.push('/statistics')}>
+          <DropdownItem key="statistics" onPress={() => setLoading(true) || router.push('/statistics')}>
             Statistics
           </DropdownItem>
           <DropdownItem key="logout" color="danger" className="text-danger" onPress={logout}>

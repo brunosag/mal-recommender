@@ -226,11 +226,11 @@ export default function Recommendations() {
 
   if (recommending) {
     return (
-      <div className="flex flex-col h-full items-center justify-center gap-6">
+      <div className="flex flex-col grow items-center justify-center gap-6">
         <Image src={loadingMew} alt="Loading Mew" className="w-48" />
-        <div className="flex flex-col text-center gap-1">
-          <span className="text-xl/[1] font-semibold">Recommending...</span>
-          <span className="italic">Matte kudasai!</span>
+        <div className="flex flex-col text-center gap-1 animate-pulse duration-100">
+          <span className="text-2xl/[1] font-semibold">Recommending</span>
+          <span className="italic font-light">matte kudasai!</span>
         </div>
       </div>
     );
