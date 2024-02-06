@@ -11,7 +11,7 @@ import {
 } from '@/lib/utils';
 import { fetchUserAnimeList, fetchAnimeDetails } from '@/lib/fetch';
 import { getAnimes } from '@/lib/db/animes';
-import { getUserAnimeRecommendations } from '@/lib/db/users';
+import { getUserAnimeGenres, getUserAnimeMediaTypes, getUserAnimeRecommendations } from '@/lib/db/users';
 import { useContext, useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Anime from '@/components/anime';
@@ -29,18 +29,29 @@ import {
   saveUserLastFetchedAnime,
 } from '@/lib/data';
 import Sorter from './sorter';
-import FilterOptions from './filter-options';
 import { DataContext } from './context/data-provider';
+import { Filter } from 'lucide-react';
+import GenresFilter from './genres-filter';
 
-export default function Recommendations({ currentUser }) {
+export default function Recommendations() {
   const { toast } = useToast();
+  const { user } = useContext(DataContext);
   const { section, setSection } = useContext(DataContext);
   const [loading, setLoading] = useState(true);
   const [recommending, setRecommending] = useState(false);
   const [userAnimeRecommendations, setUserAnimeRecommendations] = useState([]);
-  const [animeSortType, setAnimeSortType] = useState('points');
-  const [mangaSortType, setMangaSortType] = useState('points');
-
+  const [animeSortType, setAnimeSortType] = useState(new Set(['points']));
+  const [mangaSortType, setMangaSortType] = useState(new Set(['points']));
+  const [animeGenresFilter, setAnimeGenresFilter] = useState(new Set());
+  const [animeGenresCollection, setAnimeGenresCollection] = useState([]);
+  const [animeYearsFilter, setAnimeYearsFilter] = useState({});
+  const [animeMediaTypesFilter, setAnimeMediaTypesFilter] = useState(new Set());
+  const [animeMediaTypesCollection, setAnimeMediaTypesCollection] = useState([]);
+  const [mangaGenresFilter, setMangaGenresFilter] = useState(new Set());
+  const [mangaGenresCollection, setMangaGenresCollection] = useState([]);
+  const [mangaYearsFilter, setMangaYearsFilter] = useState({});
+  const [mangaMediaTypesFilter, setMangaMediaTypesFilter] = useState(new Set());
+  const [mangaMediaTypesCollection, setMangaMediaTypesCollection] = useState([]);
   function rateLimitToast() {
     toast({ description: 'Request limit exceeded.', variant: 'destructive' });
   }
@@ -48,12 +59,17 @@ export default function Recommendations({ currentUser }) {
   useEffect(() => {
     async function startRecommendationParameters() {
       let newUserAnimeRecommendations = [];
-      const userAnimeRecommendations = await getUserAnimeRecommendations(currentUser._id);
+      let newAnimeGenresCollection = [];
+      let newAnimeMediaTypesCollection = [];
+
+      const userAnimeRecommendations = await getUserAnimeRecommendations(user._id);
 
       if (userAnimeRecommendations.length !== 0) {
+        newAnimeGenresCollection = await getUserAnimeGenres(user._id);
+        newAnimeMediaTypesCollection = await getUserAnimeMediaTypes(user._id);
+
         const userAnimeRecommendationsIds = userAnimeRecommendations.map((recommendation) => recommendation.anime_id);
         const userAnimeRecommendationsDetails = await getAnimes(userAnimeRecommendationsIds);
-
         for (const recommendation of userAnimeRecommendationsDetails) {
           const matchingRecommendation = userAnimeRecommendations.find(
             (userRecommendation) => userRecommendation.anime_id === recommendation._id
@@ -73,10 +89,11 @@ export default function Recommendations({ currentUser }) {
           });
         }
       }
-
+      setAnimeSortType(new Set(['points']));
       setUserAnimeRecommendations(newUserAnimeRecommendations);
+      setAnimeGenresCollection(newAnimeGenresCollection);
+      setAnimeMediaTypesCollection(newAnimeMediaTypesCollection);
       setLoading(false);
-      setAnimeSortType('points');
     }
 
     startRecommendationParameters();
@@ -95,7 +112,7 @@ export default function Recommendations({ currentUser }) {
     }
 
     const userListAnimes = await saveAnimeFromUserList(fetchedAnimes);
-    const userList = await saveUserAnimeList(currentUser, fetchedAnimes);
+    const userList = await saveUserAnimeList(user, fetchedAnimes);
 
     let animeRecommendations = [];
     let lastFetchedAnime = {
@@ -179,12 +196,12 @@ export default function Recommendations({ currentUser }) {
 
     const formattedAnimeRecommendations = formatUserAnimeRecommendations(animeRecommendations);
     if (formattedAnimeRecommendations.length !== 0) {
-      await saveUserAnimeRecommendations(currentUser, formattedAnimeRecommendations);
-      await saveAnimeRecommendationsGenres(currentUser, formattedAnimeRecommendations);
-      await saveAnimeRecommendationsMediaTypes(currentUser, formattedAnimeRecommendations);
+      await saveUserAnimeRecommendations(user, formattedAnimeRecommendations);
+      await saveAnimeRecommendationsGenres(user, formattedAnimeRecommendations);
+      await saveAnimeRecommendationsMediaTypes(user, formattedAnimeRecommendations);
       setUserAnimeRecommendations(formattedAnimeRecommendations);
     }
-    await saveUserLastFetchedAnime(currentUser, lastFetchedAnime);
+    await saveUserLastFetchedAnime(user, lastFetchedAnime);
     setRecommending(false);
   }
 
@@ -221,7 +238,14 @@ export default function Recommendations({ currentUser }) {
       <div className="rounded-[1.75rem] flex justify-between py-2 px-5 bg-black/[0.15] gap-5">
         <div className="flex justify-between items-center gap-9">
           <Sorter sortType={animeSortType} setSortType={setAnimeSortType} />
-          <FilterOptions />
+          <div className="flex justify between gap-3">
+            <Filter size={20} className="-translate-y-[-0.4rem]" />
+            <GenresFilter
+              genresFilter={animeGenresFilter}
+              setGenresFilter={setAnimeGenresFilter}
+              genresCollection={animeGenresCollection}
+            />
+          </div>
         </div>
         <div className="flex justify-between items-center gap-2">
           <Button onPress={continueRecommendations} variant="light" radius="full" className="font-semibold text-xs h-8">

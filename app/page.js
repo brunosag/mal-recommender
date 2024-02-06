@@ -20,7 +20,7 @@ export default function Home() {
 
   return user ? (
     // authenticated
-    <Recommendations currentUser={user} />
+    <Recommendations />
   ) : (
     // not authenticated
     <div className="flex flex-col h-screen items-center justify-center text-center gap-10">
