@@ -33,7 +33,7 @@ export default function YearsFilter({ yearsFilter, setYearsFilter, yearsInterval
           step={1}
           minValue={yearsInterval.initial_year}
           maxValue={yearsInterval.final_year}
-          defaultValue={[yearsInterval.initial_year, yearsInterval.final_year]}
+          defaultValue={[yearsFilter.initial_year, yearsFilter.final_year]}
           onChangeEnd={([initialValue, finalValue]) =>
             setYearsFilter({ initial_year: initialValue, final_year: finalValue })
           }
