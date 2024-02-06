@@ -61,7 +61,7 @@ export default function Statistics() {
       sortIncreasing ? a.anime_ids.length - b.anime_ids.length : b.anime_ids.length - a.anime_ids.length
     );
     setData(sortedUserAnimeGenres);
-    console.log(data);
+    console.log(sortedUserAnimeGenres);
   }, [sortIncreasing]);
 
   if (!authenticating && !user) {
@@ -82,7 +82,7 @@ export default function Statistics() {
         <Button
           isIconOnly
           onPress={() => {
-            setSortIncreasing(!sortIncreasing);
+            setSortIncreasing((prev) => !prev);
           }}
           className="h-10 w-10"
           variant="light"

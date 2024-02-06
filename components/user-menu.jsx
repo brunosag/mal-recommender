@@ -31,7 +31,7 @@ export default function UserMenu() {
     >
       <DropdownTrigger>
         <Button className="flex items-center min-w-fit gap-1 p-[0.35rem] w-fit h-fit" variant="light" radius="full">
-          <Avatar showFallback src={user.image} fallback={user.name[0].toUpperCase()} />
+          <Avatar showFallback src={user.image} fallback="https://cdn.myanimelist.net/images/kaomoji_mal_white.png" />
           <ChevronDownIcon className={cn('w-4 h-4 transition-transform duration-75', { 'rotate-180': buttonFocus })} />
         </Button>
       </DropdownTrigger>
