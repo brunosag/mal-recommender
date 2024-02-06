@@ -6,8 +6,8 @@ import {
   formatMediaType,
   formatUserAnimeRecommendations,
   hasPrequel,
+  prepareAnimeRecommendationsList,
   rateLimitExceeded,
-  sortAnimeRecommendationsList,
 } from '@/lib/utils';
 import { fetchUserAnimeList, fetchAnimeDetails } from '@/lib/fetch';
 import { getAnimes } from '@/lib/db/animes';
@@ -32,6 +32,8 @@ import Sorter from './sorter';
 import { DataContext } from './context/data-provider';
 import { Filter } from 'lucide-react';
 import GenresFilter from './genres-filter';
+import MediaTypesFilter from './media-types-filter';
+import YearsFilter from './years-filter';
 
 export default function Recommendations() {
   const { toast } = useToast();
@@ -45,11 +47,13 @@ export default function Recommendations() {
   const [animeGenresFilter, setAnimeGenresFilter] = useState(new Set());
   const [animeGenresCollection, setAnimeGenresCollection] = useState([]);
   const [animeYearsFilter, setAnimeYearsFilter] = useState({});
+  const [animeYearsInterval, setAnimeYearsInterval] = useState({});
   const [animeMediaTypesFilter, setAnimeMediaTypesFilter] = useState(new Set());
   const [animeMediaTypesCollection, setAnimeMediaTypesCollection] = useState([]);
   const [mangaGenresFilter, setMangaGenresFilter] = useState(new Set());
   const [mangaGenresCollection, setMangaGenresCollection] = useState([]);
   const [mangaYearsFilter, setMangaYearsFilter] = useState({});
+  const [mangaYearsInterval, setMangaYearsInterval] = useState({});
   const [mangaMediaTypesFilter, setMangaMediaTypesFilter] = useState(new Set());
   const [mangaMediaTypesCollection, setMangaMediaTypesCollection] = useState([]);
   function rateLimitToast() {
@@ -61,6 +65,7 @@ export default function Recommendations() {
       let newUserAnimeRecommendations = [];
       let newAnimeGenresCollection = [];
       let newAnimeMediaTypesCollection = [];
+      let newAnimeYearsInterval = {};
 
       const userAnimeRecommendations = await getUserAnimeRecommendations(user._id);
 
@@ -88,7 +93,14 @@ export default function Recommendations() {
             related_anime: matchingRecommendation.related_anime,
           });
         }
+
+        newAnimeYearsInterval = {
+          initial_year: Math.min(...newUserAnimeRecommendations.map((recommendation) => recommendation.year)),
+          final_year: Math.max(...newUserAnimeRecommendations.map((recommendation) => recommendation.year)),
+        };
       }
+      setAnimeYearsInterval(newAnimeYearsInterval);
+      setAnimeYearsFilter(newAnimeYearsInterval);
       setAnimeSortType(new Set(['points']));
       setUserAnimeRecommendations(newUserAnimeRecommendations);
       setAnimeGenresCollection(newAnimeGenresCollection);
@@ -238,12 +250,22 @@ export default function Recommendations() {
       <div className="rounded-[1.75rem] flex justify-between py-2 px-5 bg-black/[0.15] gap-5">
         <div className="flex justify-between items-center gap-9">
           <Sorter sortType={animeSortType} setSortType={setAnimeSortType} />
-          <div className="flex justify between gap-3">
-            <Filter size={20} className="-translate-y-[-0.4rem]" />
+          <div className="flex items-center justify between gap-3">
+            <Filter size={20} className="h-8 -translate-y-[-0.1rem]" />
             <GenresFilter
               genresFilter={animeGenresFilter}
               setGenresFilter={setAnimeGenresFilter}
               genresCollection={animeGenresCollection}
+            />
+            <YearsFilter
+              yearsFilter={animeYearsFilter}
+              setYearsFilter={setAnimeYearsFilter}
+              yearsInterval={animeYearsInterval}
+            />
+            <MediaTypesFilter
+              mediaTypesFilter={animeMediaTypesFilter}
+              setMediaTypesFilter={setAnimeMediaTypesFilter}
+              mediaTypesCollection={animeMediaTypesCollection}
             />
           </div>
         </div>
@@ -257,7 +279,12 @@ export default function Recommendations() {
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        {sortAnimeRecommendationsList(userAnimeRecommendations, animeSortType).map((r) => (
+        {prepareAnimeRecommendationsList({
+          animeRecommendationsList: userAnimeRecommendations,
+          filters: { genres: animeGenresFilter, media_types: animeMediaTypesFilter, years: animeYearsFilter },
+          filtersCollections: { genres: animeGenresCollection, media_types: animeMediaTypesCollection },
+          sortType: animeSortType,
+        }).map((r) => (
           <Anime
             key={r.anime_id}
             anime={{

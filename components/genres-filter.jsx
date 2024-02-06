@@ -1,48 +1,29 @@
 'use client';
 
-import { ArrowDownUp, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-import {
-  Button,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownSection,
-  DropdownItem,
-  ScrollShadow,
-} from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { Select, SelectItem } from '@nextui-org/react';
 
 export default function GenresFilter({ genresFilter, setGenresFilter, genresCollection }) {
-  const [buttonFocus, setButtonFocus] = useState(false);
-
   return (
-    <div className="flex justify-between gap-3">
-      <Dropdown
+    <div className="w-44">
+      <Select
         aria-label="Genre Filtering Options"
-        placement="bottom-start"
-        className="font-sm text-white/80"
-        onOpenChange={() => setButtonFocus(!buttonFocus)}
+        variant="flat"
+        radius="full"
+        placeholder="Genre"
+        selectionMode="multiple"
+        selectedKeys={genresFilter}
+        onSelectionChange={setGenresFilter}
+        classNames={{
+          trigger: 'bg-black/[0.25] w-44 h-8',
+          value: 'text-xs font-semibold text-white/80',
+        }}
       >
-        <DropdownTrigger>
-          <Button variant="flat" radius="full" size="sm" className="bg-black/[0.25] w-[8vw] flex justify-between">
-            <span>Genre</span>
-            {(buttonFocus && <ChevronUpIcon className="w-4 h-4" />) ||
-              (!buttonFocus && <ChevronDownIcon className="w-4 h-4" />)}
-          </Button>
-        </DropdownTrigger>
-        <ScrollShadow>
-          <DropdownMenu
-            selectionMode="multiple"
-            closeOnSelect={false}
-            selectedKeys={genresFilter}
-            onSelectionChange={setGenresFilter}
-          >
-            {genresCollection.map((genre) => (
-              <DropdownItem key={genre.genre_id}>{genre.name}</DropdownItem>
-            ))}
-          </DropdownMenu>
-        </ScrollShadow>
-      </Dropdown>
+        {genresCollection.map((genre) => (
+          <SelectItem key={genre.genre_id} value={genre.name}>
+            {genre.name}
+          </SelectItem>
+        ))}
+      </Select>
     </div>
   );
 }
