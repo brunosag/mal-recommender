@@ -29,6 +29,10 @@ export async function PATCH(request) {
 
   const userInfo = await request.json();
 
+  if (!userInfo?.image) {
+    userInfo.image = 'https://cdn.myanimelist.net/images/kaomoji_mal_white.png';
+  }
+
   const filter = { _id: userInfo?._id };
   const update = { $set: userInfo };
 
