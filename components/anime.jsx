@@ -17,7 +17,7 @@ export default function Anime({ anime, points, relatedAnime, ...props }) {
               src={anime.image}
               alt={anime.title.jp}
               fill
-              className="w-28 h-auto rounded-2xl absolute top-0 left-0 blur-xl opacity-30 -z-10"
+              className="rounded-2xl blur-xl opacity-40"
             />
           </div>
         </Link>
