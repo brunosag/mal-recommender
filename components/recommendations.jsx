@@ -36,7 +36,7 @@ import GenresFilter from './genres-filter';
 export default function Recommendations() {
   const { toast } = useToast();
   const { user } = useContext(DataContext);
-  const { section, setSection, loading, setLoading } = useContext(DataContext);
+  const { loading, setLoading, authenticating } = useContext(DataContext);
   const [recommending, setRecommending] = useState(false);
   const [userAnimeRecommendations, setUserAnimeRecommendations] = useState([]);
   const [animeSortType, setAnimeSortType] = useState(new Set(['points']));
@@ -56,6 +56,7 @@ export default function Recommendations() {
   }
 
   useEffect(() => {
+    setLoading(true);
     async function startRecommendationParameters() {
       let newUserAnimeRecommendations = [];
       let newAnimeGenresCollection = [];
@@ -92,6 +93,7 @@ export default function Recommendations() {
       setUserAnimeRecommendations(newUserAnimeRecommendations);
       setAnimeGenresCollection(newAnimeGenresCollection);
       setAnimeMediaTypesCollection(newAnimeMediaTypesCollection);
+
       setLoading(false);
     }
 
@@ -204,7 +206,7 @@ export default function Recommendations() {
     setRecommending(false);
   }
 
-  if (loading) {
+  if (loading || authenticating) {
     return <Loading />;
   }
 

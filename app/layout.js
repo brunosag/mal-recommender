@@ -4,7 +4,6 @@ import { ThemeProvider } from '@/components/context/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import DataProvider from '@/components/context/data-provider';
 import Header from '@/components/header';
-import Loading from './loading';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -13,13 +12,12 @@ export const metadata = {
   description: 'Get anime recommendations tailored to your likes!',
 };
 
-export default async function RootLayout({ children }) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <DataProvider>
-            <Loading />
             <div className="flex flex-col min-h-screen h-fit">
               <Header />
               {children}
