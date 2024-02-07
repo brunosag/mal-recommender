@@ -37,7 +37,6 @@ export default function Statistics() {
 
   useEffect(() => {
     authenticate(setUser, setAutheticating);
-    setSortIncreasing(false);
   }, []);
 
   useEffect(() => {
@@ -57,12 +56,13 @@ export default function Statistics() {
 
   useEffect(() => {
     console.log(sortIncreasing);
-    const sortedUserAnimeGenres = data.sort((a, b) =>
-      sortIncreasing ? a.anime_ids.length - b.anime_ids.length : b.anime_ids.length - a.anime_ids.length
+    console.log(data);
+    setData((prev) =>
+      prev.sort((a, b) =>
+        sortIncreasing ? a.anime_ids.length - b.anime_ids.length : b.anime_ids.length - a.anime_ids.length
+      )
     );
-    setData(sortedUserAnimeGenres);
-    console.log(sortedUserAnimeGenres);
-  }, [sortIncreasing]);
+  }, [sortIncreasing, data]);
 
   if (!authenticating && !user) {
     return router.push('/');

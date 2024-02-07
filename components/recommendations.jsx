@@ -174,8 +174,6 @@ export default function Recommendations() {
           break;
         }
 
-        saveAnimeRecommendationDetails(recommendationDetails);
-
         const recommendationPoints = calculatePoints({
           votes: recommendation.num_recommendations,
           score: anime.score,
@@ -205,6 +203,8 @@ export default function Recommendations() {
             points: recommendationPoints,
             related_anime: [{ anime_id: anime.anime_id, title: fetchedAnimeDetails.title, score: anime.score }],
           });
+
+          saveAnimeRecommendationDetails(recommendationDetails);
         }
       }
     }
