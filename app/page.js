@@ -5,7 +5,7 @@ import { authorize } from '@/lib/auth';
 import { Button } from '@nextui-org/react';
 import { DataContext } from '@/components/context/data-provider';
 import { useContext, useEffect } from 'react';
-import Recommendations from '../components/recommendations';
+import Recommendations from '../components/recommendations/recommendations';
 import Loading from './loading';
 
 export default function Home() {

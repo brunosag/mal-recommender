@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronDownIcon } from 'lucide-react';
-import { DataContext } from './context/data-provider';
+import { DataContext } from '../context/data-provider';
 import { useContext, useState } from 'react';
 import { logout } from '@/lib/auth';
 import {

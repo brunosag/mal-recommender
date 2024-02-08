@@ -1,7 +1,7 @@
 'use client';
 
 import { BookOpenIcon, TvIcon } from 'lucide-react';
-import { DataContext } from './context/data-provider';
+import { DataContext } from '../context/data-provider';
 import { Tabs, Tab } from '@nextui-org/react';
 import { useContext } from 'react';
 

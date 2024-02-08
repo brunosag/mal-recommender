@@ -14,7 +14,7 @@ import { getAnimes } from '@/lib/db/animes';
 import { getUserAnimeGenres, getUserAnimeMediaTypes, getUserAnimeRecommendations } from '@/lib/db/users';
 import { useContext, useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import Anime from '@/components/anime';
+import Anime from '@/components/recommendations/anime';
 import Image from 'next/image';
 import Loading from '@/app/loading';
 import loadingMew from '@/public/loading-mew.gif';
@@ -28,12 +28,12 @@ import {
   saveUserAnimeRecommendations,
   saveUserLastFetchedAnime,
 } from '@/lib/data';
-import Sorter from './sorter';
-import { DataContext } from './context/data-provider';
+import Sorter from './options/sorter';
+import { DataContext } from '../context/data-provider';
 import { Filter } from 'lucide-react';
-import GenresFilter from './genres-filter';
-import MediaTypesFilter from './media-types-filter';
-import YearsFilter from './years-filter';
+import GenresFilter from './options/genres-filter';
+import MediaTypesFilter from './options/media-types-filter';
+import YearsFilter from './options/years-filter';
 
 export default function Recommendations() {
   const { toast } = useToast();
@@ -288,6 +288,7 @@ export default function Recommendations() {
           </Button>
         </div>
       </div>
+      {/* <div className="flex py-2 px-5 gap-2"></div> */}
       <div className="flex flex-col gap-4">
         {prepareAnimeRecommendationsList({
           animeRecommendationsList: userAnimeRecommendations,
