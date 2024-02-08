@@ -74,7 +74,7 @@ export default function Anime({ anime, points, relatedAnime, ...props }) {
                 variant="flat"
                 className="text-xs"
                 classNames={{
-                  list: 'max-h-48',
+                  list: 'max-h-44',
                 }}
               >
                 {relatedAnime.map((anime, index) => (
