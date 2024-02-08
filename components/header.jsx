@@ -18,10 +18,14 @@ export default function Header() {
   return (
     <header className="top-0 z-40 w-full">
       <div className="container w-5/6 py-6 grid grid-cols-3 items-center">
-        <Link href="/" className="flex items-center gap-4" onClick={() => setLoading(true)}>
-          <Image src={logoWhite} alt="logo" className="h-10 w-10" />
-          <h1 className="text-xl/[1] font-extrabold">mal-recommender</h1>
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" onClick={() => setLoading(true)}>
+            <Image src={logoWhite} alt="logo" className="h-10 w-10" />
+          </Link>
+          <Link href="/" onClick={() => setLoading(true)}>
+            <h1 className="text-xl/[1] font-extrabold">mal-recommender</h1>
+          </Link>
+        </div>
         <div className="flex justify-center items-center">
           <SectionSwitch />
         </div>

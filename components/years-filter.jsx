@@ -28,6 +28,7 @@ export default function YearsFilter({ yearsFilter, setYearsFilter, yearsInterval
           size="sm"
           radius="full"
           showTooltip={true}
+          tooltipValueFormatOptions={{ useGrouping: false }}
           orientation="vertical"
           step={1}
           minValue={yearsInterval.initial_year}
