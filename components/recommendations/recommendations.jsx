@@ -34,6 +34,7 @@ import { Filter } from 'lucide-react';
 import GenresFilter from './options/genres-filter';
 import MediaTypesFilter from './options/media-types-filter';
 import YearsFilter from './options/years-filter';
+import FilterChips from './filter-chips';
 
 export default function Recommendations() {
   const { toast } = useToast();
@@ -251,7 +252,7 @@ export default function Recommendations() {
   }
 
   return (
-    <div className="container w-5/6 h-fit py-8 flex flex-col gap-5">
+    <div className="container w-5/6 h-fit py-8 flex flex-col gap-4">
       <div className="rounded-[1.75rem] flex justify-between py-2 px-5 bg-black/[0.15] gap-5">
         <div className="flex justify-between items-center gap-9">
           <Sorter
@@ -288,7 +289,14 @@ export default function Recommendations() {
           </Button>
         </div>
       </div>
-      {/* <div className="flex py-2 px-5 gap-2"></div> */}
+      <FilterChips
+        genresFilter={animeGenresFilter}
+        genresCollection={animeGenresCollection}
+        yearsFilter={animeYearsFilter}
+        yearsInterval={animeYearsInterval}
+        mediaTypesFilter={animeMediaTypesFilter}
+        mediaTypesCollection={animeMediaTypesCollection}
+      />
       <div className="flex flex-col gap-4">
         {prepareAnimeRecommendationsList({
           animeRecommendationsList: userAnimeRecommendations,
