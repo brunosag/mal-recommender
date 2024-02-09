@@ -2,14 +2,17 @@
 
 import { Chip, Divider } from '@nextui-org/react';
 import { formatMediaType, formatYearIntervalChip } from '@/lib/utils';
-import { Tags } from 'lucide-react';
+import { Tags, XCircle } from 'lucide-react';
 
 export default function FilterChips({
   genresFilter,
+  setGenresFilter,
   genresCollection,
   yearsFilter,
+  setYearsFilter,
   yearsInterval,
   mediaTypesFilter,
+  setMediaTypesFilter,
   mediaTypesCollection,
 }) {
   const existsGenresFilter = genresFilter?.size > 0;
@@ -31,12 +34,16 @@ export default function FilterChips({
               size="sm"
               radius="full"
               classNames={{
-                base: 'bg-black/[0.15] h-7 w-fit flex px-3',
-                content: 'text-xs text-white/70 font-semibold',
+                base: 'bg-black/[0.15] h-7 w-fit flex items-center gap-0.5 px-3 text-xs text-white/70 font-semibold',
               }}
-            >
-              {genre.name}
-            </Chip>
+              startContent={<span>{genre.name}</span>}
+              endContent={<XCircle size={16} />}
+              onClose={() => {
+                genresFilter.delete(genresFilter.delete(genre.genre_id.toString()));
+                const newGenresFilter = new Set(genresFilter);
+                setGenresFilter(newGenresFilter);
+              }}
+            />
           ))}
 
         {existsGenresFilter && existsYearsFilter && (
@@ -50,12 +57,14 @@ export default function FilterChips({
             size="sm"
             radius="full"
             classNames={{
-              base: 'bg-black/[0.15] h-7 w-fit flex px-3',
-              content: 'text-xs text-white/70 font-semibold',
+              base: 'bg-black/[0.15] h-7 w-fit flex items-center gap-0.5 px-3 text-xs text-white/70 font-semibold',
             }}
-          >
-            {formatYearIntervalChip(yearsFilter)}
-          </Chip>
+            startContent={<span>{formatYearIntervalChip(yearsFilter)}</span>}
+            endContent={<XCircle size={16} />}
+            onClose={() =>
+              setYearsFilter({ initial_year: yearsInterval.initial_year, final_year: yearsInterval.final_year })
+            }
+          />
         )}
 
         {existsGenresFilter && existsMediaTypesFilter && (
@@ -76,12 +85,16 @@ export default function FilterChips({
               size="sm"
               radius="full"
               classNames={{
-                base: 'bg-black/[0.15] h-7 w-fit flex px-3',
-                content: 'text-xs text-white/70 font-semibold',
+                base: 'bg-black/[0.15] h-7 w-fit flex items-center gap-0.5 px-3 text-xs text-white/70 font-semibold',
               }}
-            >
-              {formatMediaType(mediaType.media_type)}
-            </Chip>
+              startContent={<span>{formatMediaType(mediaType.media_type)}</span>}
+              endContent={<XCircle size={16} />}
+              onClose={() => {
+                mediaTypesFilter.delete(mediaType.media_type);
+                const newMediaTypesFilter = new Set(mediaTypesFilter);
+                setMediaTypesFilter(newMediaTypesFilter);
+              }}
+            />
           ))}
       </div>
     </div>

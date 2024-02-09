@@ -291,10 +291,13 @@ export default function Recommendations() {
       </div>
       <FilterChips
         genresFilter={animeGenresFilter}
+        setGenresFilter={setAnimeGenresFilter}
         genresCollection={animeGenresCollection}
         yearsFilter={animeYearsFilter}
+        setYearsFilter={setAnimeYearsFilter}
         yearsInterval={animeYearsInterval}
         mediaTypesFilter={animeMediaTypesFilter}
+        setMediaTypesFilter={setAnimeMediaTypesFilter}
         mediaTypesCollection={animeMediaTypesCollection}
       />
       <div className="flex flex-col gap-4">
