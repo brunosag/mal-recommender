@@ -2,7 +2,7 @@ export async function GET(request) {
   const params = new URLSearchParams(new URL(request.url).search);
   const token = params.get('token');
 
-  const status = ['watching', 'completed'];
+  const status = ['watching', 'completed', 'dropped'];
 
   let animeList = [];
   for (const entry of status) {

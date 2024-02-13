@@ -137,7 +137,7 @@ export default function Recommendations() {
     };
 
     for (const anime of userList) {
-      if (anime.score < 7) {
+      if (anime.score < 7 || anime.status === 'dropped') {
         continue;
       }
 
