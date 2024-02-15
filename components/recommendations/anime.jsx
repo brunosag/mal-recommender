@@ -43,11 +43,7 @@ export default function Anime({ anime, points, relatedAnime, ...props }) {
             </Link>
           </div>
           <div className="flex flex-col gap-1 text-xs">
-            <span className="text-white/70 font-light">
-              {anime.genres
-                .map((genre, index) => (index === anime.genres.length - 1 ? genre.name : `${genre.name}, `))
-                .join('')}
-            </span>
+            <span className="text-white/70 font-light">{anime.genres.map((genre) => genre.name).join(', ')}</span>
             <div className="flex items-center gap-3">
               <span>{anime.year}</span>
               <span className="text-white/40 font-light">{anime.media_type}</span>
