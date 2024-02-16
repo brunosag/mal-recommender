@@ -6,7 +6,7 @@ export async function GET(request) {
 
   let animeList = [];
   for (const entry of status) {
-    const url = `https://api.myanimelist.net/v2/users/@me/animelist?status=${entry}&limit=1000&fields=list_status,media_type,genres,mean,alternative_titles,num_list_users,start_season`;
+    const url = `https://api.myanimelist.net/v2/users/@me/animelist?status=${entry}&nsfw=true&limit=1000&fields=list_status,media_type,genres,mean,alternative_titles,num_list_users,start_season`;
 
     try {
       const res = await fetch(url, {
