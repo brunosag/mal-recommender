@@ -22,7 +22,7 @@ export default function Anime({ anime, points, relatedAnime, ...props }) {
       <div className="flex gap-5">
         <Link href={MALUrl} target="_blank">
           <div className="relative w-28 h-40">
-            <Image src={anime.image} alt={anime.title.jp} fill className="rounded-2xl" />
+            <Image src={anime.image} alt={anime.title.jp} fill className="rounded-2xl z-10" />
             <Image src={anime.image} alt={anime.title.jp} fill className="rounded-2xl blur-xl opacity-40" />
           </div>
         </Link>
