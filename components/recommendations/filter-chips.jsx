@@ -1,6 +1,6 @@
 'use client';
 
-import { Chip, Divider } from '@nextui-org/react';
+import { Button, Chip, Divider } from '@nextui-org/react';
 import { formatMediaType, formatYearIntervalChip } from '@/lib/utils';
 import { Tags, XCircle } from 'lucide-react';
 
@@ -46,9 +46,9 @@ export default function FilterChips({
             />
           ))}
 
-        {existsGenresFilter && existsYearsFilter && (
+        {existsGenresFilter && existsYearsFilter ? (
           <Divider key="divider_1" orientation="vertical" className="max-h-7" />
-        )}
+        ) : null}
 
         {(yearsFilter.initial_year !== yearsInterval.initial_year ||
           yearsFilter.final_year !== yearsInterval.final_year) && (
@@ -67,13 +67,10 @@ export default function FilterChips({
           />
         )}
 
-        {existsGenresFilter && existsMediaTypesFilter && (
+        {(existsGenresFilter && existsMediaTypesFilter) ||
+        (!existsGenresFilter && existsYearsFilter && existsMediaTypesFilter) ? (
           <Divider key="divider_2_1" orientation="vertical" className="max-h-7" />
-        )}
-
-        {!existsGenresFilter && existsYearsFilter && existsMediaTypesFilter && (
-          <Divider key="divider_2_2" orientation="vertical" className="max-h-7" />
-        )}
+        ) : null}
 
         {mediaTypesCollection
           .filter((mediaType) => mediaTypesFilter.has(mediaType.media_type))
@@ -96,6 +93,20 @@ export default function FilterChips({
               }}
             />
           ))}
+        <Divider key="divider_2_2" orientation="vertical" className="max-h-7" />
+        <Button
+          key="clear_all"
+          variant="solid"
+          size="sm"
+          radius="full"
+          className="bg-black/[0.15] h-7 w-fit flex items-center gap-0.5 px-3 border-2 border-white/40 text-xs text-white/70 font-semibold"
+          startContent={<span>Clear All</span>}
+          onPress={() => {
+            setGenresFilter(new Set());
+            setYearsFilter({ initial_year: yearsInterval.initial_year, final_year: yearsInterval.final_year });
+            setMediaTypesFilter(new Set());
+          }}
+        />
       </div>
     </div>
   ) : null;
